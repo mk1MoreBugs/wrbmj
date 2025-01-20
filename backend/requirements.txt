@@ -1,0 +1,29 @@
+# python -m pip install -r requirements.txt
+
+
+# FastAPI
+fastapi[all]
+
+# Pydantic
+pydantic
+
+# SQLAlchemy
+alembic
+sqlmodel
+psycopg[binary,pool]
+
+# ODM (Object Document Mapper) for MongoDB
+odmantic
+
+# Redis
+redis
+
+# PyJWT, bcrypt
+PyJWT
+bcrypt
+
+# Tests
+pytest
+httpx
+
+mypy

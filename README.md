@@ -1,3 +1,0 @@
-# wrbmj
-
-We are бомжи
