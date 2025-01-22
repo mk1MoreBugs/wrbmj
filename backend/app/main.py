@@ -12,7 +12,8 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    root_path=settings.API_V1_STR,
+    openapi_url="/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
 
@@ -26,4 +27,4 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_router)
