@@ -1,14 +1,14 @@
 services:
   backend:
     build:
-      context: ./backend
+      context: ./backend/
       dockerfile: docker/backend/Dockerfile
-    restart: always
+    restart: on-failure
     develop:
       watch:
-        - action: sync
-          path: ./backend
-          target: /backend
+        - action: sync+restart
+          path: ./backend/app
+          target: /backend/app
     depends_on:
       - db
     environment:
@@ -39,8 +39,20 @@ services:
 
   nginx:
     build:
-      context: ./backend
-      dockerfile: docker/nginx/Dockerfile
+      context: ./backend/nginx
+      dockerfile: ../docker/nginx/Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/nginx/nginx.conf
+          target: /etc/nginx/nginx.conf
+        - action: sync
+          path: ./backend/nginx/data
+          target: /usr/share/nginx/html
 
 
 volumes:
