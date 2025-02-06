@@ -2,8 +2,7 @@ FROM python:slim
 
 WORKDIR /backend
 
-COPY ./app app
-COPY requirements.txt .
+COPY . .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 EXPOSE 8080
 
