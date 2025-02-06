@@ -14,6 +14,7 @@ services:
       - postgres_password
     volumes:
       - "./backend/app:/backend/app"
+      - data_storage_volume:/backend/data_storage
 
   db:
     image: postgres:17.2-alpine3.21
@@ -53,6 +54,7 @@ services:
 
 volumes:
   db_volume:
+  data_storage_volume:
 
 secrets:
    postgres_password:
