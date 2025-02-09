@@ -1,0 +1,8 @@
+from sqlmodel import Field, SQLModel
+
+
+class User(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    username: str = Field(max_length=42)
+    hashed_password: str
+    photo_file: str
