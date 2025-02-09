@@ -2,22 +2,27 @@ from collections.abc import Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, delete
-
-from app.core.db import engine, init_db
+from sqlmodel import Session
+from ..core.config import settings
+from app.core.db import get_engine
 from app.main import app
+from app.models import SQLModel
+from sqlalchemy import text
 
-
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture()
 def db() -> Generator[Session, None, None]:
+    old_path = settings.POSTGRES_DB
+    test_db = "test_database"
+    # in psql: CREATE DATABASE test_database;
+    settings.set_db_path(path=test_db)
+    engine = get_engine()
+    SQLModel.metadata.create_all(engine)
+
     with Session(engine) as session:
-        # init_db(session) # TODO
         yield session
 
-        # statement = delete(Item)
-        # session.execute(statement)
-        # Delete other tables
-        # session.commit()
+    # DROP DATABASE test_database;
+    settings.set_db_path(path=old_path)
 
 
 @pytest.fixture(scope="module")
