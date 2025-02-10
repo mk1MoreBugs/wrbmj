@@ -52,7 +52,7 @@ class Settings(BaseSettings):
         if path is None:
             path = "../db_password.txt"
         with open(path, encoding="utf-8") as f:
-            return f.readline()[:-1]
+            return f.readline()
 
 
 

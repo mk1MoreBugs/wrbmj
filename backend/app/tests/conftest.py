@@ -7,21 +7,31 @@ from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
 from app.models import SQLModel
-from sqlalchemy import text
 
-@pytest.fixture()
+
+@pytest.fixture(scope="package")
 def db() -> Generator[Session, None, None]:
+    """
+    before crud tests:
+        docker exec -it wrbmj-db-1 \
+        psql -U postgres \
+        -c "CREATE DATABASE test_database;"
+
+    after:
+        docker exec -it wrbmj-db-1 \
+        psql -U postgres \
+        -c "DROP DATABASE test_database;"
+    """
+
     old_path = settings.POSTGRES_DB
     test_db = "test_database"
-    # in psql: CREATE DATABASE test_database;
     settings.set_db_path(path=test_db)
-    engine = get_engine()
+    engine = get_engine(echo=True)
     SQLModel.metadata.create_all(engine)
 
     with Session(engine) as session:
         yield session
 
-    # DROP DATABASE test_database;
     settings.set_db_path(path=old_path)
 
 
