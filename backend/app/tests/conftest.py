@@ -6,7 +6,7 @@ from sqlmodel import Session
 from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
-from app.models import SQLModel
+from app.models import SQLModel, User
 
 
 @pytest.fixture(scope="package")
@@ -39,3 +39,12 @@ def db() -> Generator[Session, None, None]:
 def client() -> Generator[TestClient, None, None]:
     with TestClient(app) as c:
         yield c
+
+
+@pytest.fixture()
+def user() -> User:
+    return  User(
+        username="user_name",
+        hashed_password="hashed_password",
+        photo_file="path/to/file"
+    )
