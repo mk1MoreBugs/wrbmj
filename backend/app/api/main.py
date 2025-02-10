@@ -1,11 +1,7 @@
 from fastapi import APIRouter
 
+from app.api.routes import users
 
-api_router = APIRouter(
-    tags = ["hello world"],
-)
+api_router = APIRouter()
 
-
-@api_router.get("/")
-def hello_world():
-    return "hello FastAPI!"
+api_router.include_router(users.router)
