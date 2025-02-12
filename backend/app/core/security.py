@@ -5,7 +5,7 @@ from jwt.exceptions import InvalidTokenError
 
 from app.api.deps import SessionDep
 from app.core.config import settings
-from app.models.users import User
+from app.models.users import UserInDb
 from app.models.tokens import TokenData
 
 ALGORITHM = "HS256"
@@ -32,12 +32,12 @@ def get_password_hash(password: str) -> str:
     return __bytes_to_string(hashed_password)
 
 
-def authenticate_user(session: SessionDep, username: str, password: str) -> User | bool:
+def authenticate_user(session: SessionDep, username: str, password: str) -> UserInDb | bool:
     # TODO: get user from db
-    user = User(
+    user = UserInDb(
         username="user_name",
         hashed_password="hashed_password",
-        photo_file="path/to/file"
+        photo_file_name="path/to/file"
     )
     if not user:
         return False
