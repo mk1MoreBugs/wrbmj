@@ -11,7 +11,7 @@ def create_user(session: Session, user: UserInDb) -> UserInDb:
     return user
 
 
-def get_user_by_id(session: Session, user_id: int) -> UserInDb | None:
-    statement: Select = select(UserInDb).where(UserInDb.id == user_id)
-    session_user = session.exec(statement).first()
+def get_user_by_username(session: Session, username: str) -> UserInDb | None:
+    statement: Select = select(UserInDb).where(UserInDb.username == username)
+    session_user: UserInDb | None = session.exec(statement).first()
     return session_user

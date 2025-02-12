@@ -6,8 +6,9 @@ from sqlmodel import Session
 from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
-from app.models import UserInDb
 from app.core.db import SQLModel
+from ..models.users import UserInDb, UserUpload
+
 
 @pytest.fixture(scope="package")
 def db() -> Generator[Session, None, None]:
@@ -42,9 +43,9 @@ def client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture()
-def user() -> UserInDb:
-    return  UserInDb(
+def user() -> UserUpload:
+    return  UserUpload(
         username="user_name",
-        hashed_password="hashed_password",
-        photo_file_name="path/to/file"
+        plain_password="hashed_password",
+        photo_file= b"photo_file"
     )
