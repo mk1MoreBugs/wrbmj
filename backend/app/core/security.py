@@ -5,6 +5,7 @@ from jwt.exceptions import InvalidTokenError
 
 from app.api.deps import SessionDep
 from app.core.config import settings
+from app.crud.users import get_user_by_username
 from app.models.users import UserInDb
 from app.models.tokens import TokenData
 
@@ -20,7 +21,7 @@ def create_access_token(data: dict, expires_delta: timedelta) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     plain_password_bytes = __string_to_bytes(plain_password)
-    hashed_password_bytes = __string_to_bytes(plain_password)
+    hashed_password_bytes = __string_to_bytes(hashed_password)
     return bcrypt.checkpw(plain_password_bytes, hashed_password_bytes)
 
 
@@ -34,14 +35,10 @@ def get_password_hash(password: str) -> str:
 
 def authenticate_user(session: SessionDep, username: str, password: str) -> UserInDb | bool:
     # TODO: get user from db
-    user = UserInDb(
-        username="user_name",
-        hashed_password="hashed_password",
-        photo_file_name="path/to/file"
-    )
+    user = get_user_by_username(session=session, username=username)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(plain_password=password, hashed_password=user.hashed_password):
         return False
     return user
 
