@@ -2,7 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from app.models import SQLModel
+from app.core.db import SQLModel
 
 from alembic import context
 
@@ -29,7 +29,7 @@ target_metadata = SQLModel.metadata
 # ... etc.
 
 
-def get_url():
+def get_url() -> str:
     return str(settings.SQLALCHEMY_DATABASE_URI)
 
 

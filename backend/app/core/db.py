@@ -1,6 +1,6 @@
-from sqlmodel import create_engine
-from app.models import User
+from sqlmodel import create_engine, SQLModel
 
+import app.models
 from app.core.config import settings
 
 

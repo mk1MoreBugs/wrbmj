@@ -5,8 +5,8 @@ from jwt.exceptions import InvalidTokenError
 
 from app.api.deps import SessionDep
 from app.core.config import settings
-from app.models import User, TokenData
-
+from app.models.users import User
+from app.models.tokens import TokenData
 
 ALGORITHM = "HS256"
 

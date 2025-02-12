@@ -6,8 +6,8 @@ from sqlmodel import Session
 from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
-from app.models import SQLModel, User
-
+from app.models import User
+from app.core.db import SQLModel
 
 @pytest.fixture(scope="package")
 def db() -> Generator[Session, None, None]:
