@@ -34,9 +34,8 @@ def get_password_hash(password: str) -> str:
 
 
 def authenticate_user(session: SessionDep, username: str, password: str) -> UserInDb | bool:
-    # TODO: get user from db
     user = get_user_by_username(session=session, username=username)
-    if not user:
+    if user is None:
         return False
     if not verify_password(plain_password=password, hashed_password=user.hashed_password):
         return False

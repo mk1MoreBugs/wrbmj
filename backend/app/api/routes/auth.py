@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.api.deps import get_db
+from app.api.deps import SessionDep
 from app.core.config import settings
 from app.core.security import authenticate_user, create_access_token
 from app.models.tokens import Token
@@ -15,9 +15,9 @@ router = APIRouter(
 )
 
 
-@router.get("/login")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    user = authenticate_user(session=get_db(), username=form_data.username, password=form_data.password)
+@router.post("/login")
+async def login(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+    user = authenticate_user(session=session, username=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
