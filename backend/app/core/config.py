@@ -10,7 +10,6 @@ from pydantic import (
     computed_field,
     model_validator,
 )
-from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
@@ -79,6 +78,10 @@ class Settings(BaseSettings):
 
     def set_db_path(self, path:str):
         self.POSTGRES_DB = path
+
+
+    def set_db_host(self, host:str):
+        self.POSTGRES_SERVER = host
 
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:

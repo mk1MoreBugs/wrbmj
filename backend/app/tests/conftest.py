@@ -7,7 +7,7 @@ from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
 from app.core.db import SQLModel
-from ..models.users import UserInDb, UserUpload
+from ..models.users import UserUpload
 
 
 @pytest.fixture(scope="package")
@@ -24,6 +24,7 @@ def db() -> Generator[Session, None, None]:
         -c "DROP DATABASE test_database;"
     """
 
+    settings.set_db_host(host="localhost")
     old_path = settings.POSTGRES_DB
     test_db = "test_database"
     settings.set_db_path(path=test_db)
@@ -33,6 +34,7 @@ def db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         yield session
 
+    settings.set_db_host(host="db")
     settings.set_db_path(path=old_path)
 
 
