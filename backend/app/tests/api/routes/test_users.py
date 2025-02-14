@@ -2,14 +2,16 @@ from starlette.testclient import TestClient
 from sqlmodel import Session
 
 from app.core.config import settings
-from app.models.users import UserUpload
-from app.tests.utils.users import get_auth_header
+from app.tests.utils.users import get_auth_header, get_unique_username
 
 
-def test_user_info_create_user_and_get_auth_header_return_status_code_200(db: Session, client: TestClient, user: UserUpload) -> None:
+def test_user_info_create_user_and_get_auth_header_return_username(db: Session, client: TestClient, unique_usernames: str) -> None:
+    username = get_unique_username(unique_usernames=unique_usernames)
     response = client.get(
         url=f"{settings.API_V1_STR}/users/me",
-        headers=get_auth_header(db=db, client=client, user=user)
+        headers=get_auth_header(db=db, client=client, username=username, plain_password="plain_password")
     )
     assert response.status_code == 200
-    assert response.json().get("username") is not None
+    assert response.json().get("username") == username
+
+

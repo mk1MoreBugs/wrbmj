@@ -51,3 +51,8 @@ def user() -> UserUpload:
         plain_password="hashed_password",
         photo_file= b"photo_file"
     )
+
+
+@pytest.fixture(scope="session")
+def unique_usernames() -> set[str]:
+    return set()
