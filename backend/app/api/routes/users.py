@@ -1,17 +1,21 @@
-from typing import Annotated
+from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
-from app.api.deps import reusable_oauth2
-from app.core.security import decode_jwt_token
+from app.api.deps import reusable_oauth2, SessionDep
+from app.core.security import decode_jwt_token, get_password_hash
 from app.models.tokens import TokenData
+from app.models.users import UserUpload, UserInDb
+from app.crud import users
+
 
 router = APIRouter(
     prefix="/users",
     tags = ["users"],
 )
 
-@router.get("/")
-async def get_user_info(token: Annotated[str, Depends(reusable_oauth2)]):
+@router.get("/me", response_model=TokenData)
+async def get_user_info(token: Annotated[str, Depends(reusable_oauth2)]) -> TokenData | HTTPException:
     token_data: TokenData | None = decode_jwt_token(token=token)
     if token_data is not None:
         return token_data
@@ -20,4 +24,25 @@ async def get_user_info(token: Annotated[str, Depends(reusable_oauth2)]):
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+@router.post(
+    path="/create",
+    status_code=status.HTTP_201_CREATED,
+    response_model=dict[str, str],
+)
+async def create_user(session: SessionDep, user_upload: UserUpload) -> dict[str, str] | HTTPException:
+    users_for_write_db = UserInDb(
+        **dict(user_upload),
+        hashed_password=get_password_hash(password=user_upload.plain_password),
+        photo_file_name="path/to/file"
+    )
+    try:
+        users.create_user(session=session, user=users_for_write_db)
+        return {"status": "created"}
+    except IntegrityError:
+        return HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail="username already exists",
         )
