@@ -25,26 +25,24 @@ def get_unique_username(unique_usernames) -> str:
 
 
 def get_auth_token_response(
-        db: Session,
         client: TestClient,
         username: str,
         plain_password: str
 ) -> Response:
-    create_test_user(db=db, username=username, plain_password=plain_password)
     data_credentials = {"username": username, "password": plain_password}
 
     return client.post(url=f"{settings.API_V1_STR}/auth/login/", data=data_credentials)
 
 
 def get_auth_header(
-        db: Session,
         client: TestClient,
         username: str,
         plain_password: str
 ) -> dict[str, str]:
     response = get_auth_token_response(
-        db=db, client=client,
-        username=username, plain_password=plain_password
+        client=client,
+        username=username,
+        plain_password=plain_password
     )
     auth_token: dict[str, str] = response.json()
     return {"Authorization": "Bearer " + auth_token["access_token"]}

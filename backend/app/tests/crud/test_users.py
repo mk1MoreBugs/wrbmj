@@ -3,7 +3,6 @@ from sqlalchemy.exc import IntegrityError
 import pytest
 
 from app.crud import users
-from app.models.users import UserUpload
 from app.tests.utils.users import create_test_user, get_unique_username
 
 

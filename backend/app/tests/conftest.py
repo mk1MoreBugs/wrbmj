@@ -38,7 +38,7 @@ def db() -> Generator[Session, None, None]:
     settings.set_db_path(path=old_path)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="package")
 def client() -> Generator[TestClient, None, None]:
     with TestClient(app) as c:
         yield c
