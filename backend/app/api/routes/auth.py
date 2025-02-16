@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.api.deps import SessionDep
 from app.core.config import settings
 from app.core.security import authenticate_user, create_access_token
+from app.models.responses import UnauthorizedMessage
 from app.models.tokens import Token
 
 
@@ -15,8 +16,12 @@ router = APIRouter(
 )
 
 
-@router.post("/login")
-async def login(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+@router.post(
+    path="/login",
+    response_model= Token,
+    responses={401: {"model": UnauthorizedMessage}},
+)
+async def login(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token | HTTPException:
     user = authenticate_user(session=session, username=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(

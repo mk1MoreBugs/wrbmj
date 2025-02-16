@@ -1,9 +1,10 @@
-from typing import Annotated, Any
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from app.api.deps import reusable_oauth2, SessionDep
 from app.core.security import decode_jwt_token, get_password_hash
+from app.models.responses import DetailMessage, UnauthorizedMessage
 from app.models.tokens import TokenData
 from app.models.users import UserUpload, UserInDb
 from app.crud import users
@@ -14,13 +15,18 @@ router = APIRouter(
     tags = ["users"],
 )
 
-@router.get("/me", response_model=TokenData)
+
+@router.get(
+    path="/me",
+    response_model=TokenData,
+    responses={401: {"model": UnauthorizedMessage}},
+)
 async def get_user_info(token: Annotated[str, Depends(reusable_oauth2)]) -> TokenData | HTTPException:
     token_data: TokenData | None = decode_jwt_token(token=token)
     if token_data is not None:
         return token_data
     else:
-        return HTTPException(
+        raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
@@ -31,6 +37,7 @@ async def get_user_info(token: Annotated[str, Depends(reusable_oauth2)]) -> Toke
     path="/create",
     status_code=status.HTTP_201_CREATED,
     response_model=dict[str, str],
+    responses={409: {"model": DetailMessage}},
 )
 async def create_user(session: SessionDep, user_upload: UserUpload) -> dict[str, str] | HTTPException:
     users_for_write_db = UserInDb(
@@ -41,8 +48,9 @@ async def create_user(session: SessionDep, user_upload: UserUpload) -> dict[str,
     try:
         users.create_user(session=session, user=users_for_write_db)
         return {"status": "created"}
+
     except IntegrityError:
-        return HTTPException(
+        raise HTTPException(
         status_code=status.HTTP_409_CONFLICT,
         detail="username already exists",
         )

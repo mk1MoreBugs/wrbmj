@@ -9,6 +9,7 @@ from app.crud.users import get_user_by_username
 from app.models.users import UserInDb
 from app.models.tokens import TokenData
 
+
 ALGORITHM = "HS256"
 
 def create_access_token(data: dict, expires_delta: timedelta) -> str:
@@ -33,12 +34,12 @@ def get_password_hash(password: str) -> str:
     return __bytes_to_string(hashed_password)
 
 
-def authenticate_user(session: SessionDep, username: str, password: str) -> UserInDb | bool:
+def authenticate_user(session: SessionDep, username: str, password: str) -> UserInDb | None:
     user = get_user_by_username(session=session, username=username)
     if user is None:
-        return False
+        return None
     if not verify_password(plain_password=password, hashed_password=user.hashed_password):
-        return False
+        return None
     return user
 
 
