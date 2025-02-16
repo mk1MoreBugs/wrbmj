@@ -30,6 +30,7 @@ target_metadata = SQLModel.metadata
 
 
 def get_url() -> str:
+    settings.set_db_host("localhost")
     return str(settings.SQLALCHEMY_DATABASE_URI)
 
 
