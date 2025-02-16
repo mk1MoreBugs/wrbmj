@@ -1,3 +1,4 @@
+import os
 import secrets
 import warnings
 from typing import Annotated, Any, Literal
@@ -9,7 +10,6 @@ from pydantic import (
     computed_field,
     model_validator,
 )
-from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
@@ -44,17 +44,29 @@ class Settings(BaseSettings):
     def all_cors_origins(self) -> list[str]:
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
 
+
+    @staticmethod
+    def __get_postgres_password():
+        path = os.getenv("POSTGRES_PASSWORD_FILE")
+        if path is None:
+            path = "../db_password.txt"
+        with open(path, encoding="utf-8") as f:
+            return f.readline()
+
+
+
     PROJECT_NAME: str
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
+    POSTGRES_PASSWORD: str = __get_postgres_password()
     POSTGRES_DB: str = ""
+
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-        return MultiHostUrl.build(
+        return PostgresDsn.build(
             scheme="postgresql+psycopg",
             username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
@@ -62,6 +74,14 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
+
+
+    def set_db_path(self, path:str):
+        self.POSTGRES_DB = path
+
+
+    def set_db_host(self, host:str):
+        self.POSTGRES_SERVER = host
 
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
