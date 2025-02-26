@@ -3,6 +3,7 @@
 
 # FastAPI
 fastapi[all]
+websockets
 
 # Pydantic
 pydantic
