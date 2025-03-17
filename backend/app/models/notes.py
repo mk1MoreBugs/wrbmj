@@ -9,7 +9,7 @@ from app.models import UserInDb
 class BaseNotes(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
     last_update: datetime
-    title_name: Optional[str, Field(max_length=84)]
+    title_name: Optional[str] = Field(max_length=84)
 
 
 class NotesInDb(BaseNotes, table=True):
