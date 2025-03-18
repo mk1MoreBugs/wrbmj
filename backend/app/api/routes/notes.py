@@ -1,9 +1,14 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Path
+from fastapi import (
+    APIRouter,
+    Depends,
+    Path,
+    WebSocket,
+)
+from starlette.websockets import WebSocketDisconnect
 
-from app.api.deps import reusable_oauth2
+from app.api.deps import reusable_oauth2, TokenDep, WsConnectionManagerDep
 from app.models.notes import NotesOutShort, NotesOutInDetailed
-
 
 router = APIRouter(
     prefix="/notes",
@@ -16,33 +21,33 @@ async def get_list_notes_for_user(token: Annotated[str, Depends(reusable_oauth2)
     pass
 
 
-@router.websocket("/{note_id}")
+@router.websocket("/edit")
 async def get_note_by_id(
         note_id: Annotated[str, Path()],
-        token: Annotated[str, Depends(reusable_oauth2)]
-) -> NotesOutInDetailed:
-    # check user token
+        token: TokenDep,
+        websocket: WebSocket,
+        connection_manager: WsConnectionManagerDep,
+):
+    # TODO: check user token
+    # if Ok then connect
+    await connection_manager.connect(websocket)
 
-    # get note in redis
+    # TODO: get note in redis
 
-        # if note exist in redis then get note from db
-            # and save in redis
+    # TODO: if  note don't exist in redis then get note from db
+        # TODO: and save in redis
 
-        # if note don't exist in db then send error
+    # TODO: if note don't exist in db save in redis response body
 
-    # if Ok then send note
-    pass
+    # TODO: send note
+    note = ""
+    connection_manager.send_personal_message(note, websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
 
 
-@router.put("/")
-async def update_note(
-        data: NotesOutInDetailed,
-        token: Annotated[str, Depends(reusable_oauth2)]
-) -> dict[str, str]:
-    # check user token
-
-    # save note in redis, ex=None
-
-    # save note in db
-
-    pass
+            await connection_manager.broadcast(message=data)
+    except WebSocketDisconnect:
+        connection_manager.disconnect(websocket)
