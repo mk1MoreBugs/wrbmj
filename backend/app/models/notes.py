@@ -15,7 +15,7 @@ class BaseNotes(SQLModel):
 class NotesInDb(BaseNotes, table=True):
     __tablename__ = "notes"
 
-    user_id: Annotated[int, Field(default=None, foreign_key="users.id")]
+    user_id: Annotated[int, Field(foreign_key="users.id")]
     noteContent: Annotated[str, Field(sa_type=Text)]
 
     user: UserInDb = Relationship(back_populates="notes")

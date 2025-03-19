@@ -8,13 +8,13 @@ from app.crud import users
 from app.models import UserInDb
 
 
-def create_test_user(db: Session, username: str, plain_password: str):
+def create_test_user(db: Session, username: str, plain_password: str) -> UserInDb:
     users_for_write_db = UserInDb(
         username=username,
         hashed_password=get_password_hash(password=plain_password),
         photo_file_name="path/to/file"
     )
-    users.create_user(session=db, user=users_for_write_db)
+    return users.create_user(session=db, user=users_for_write_db)
 
 
 def get_unique_username(unique_usernames) -> str:
