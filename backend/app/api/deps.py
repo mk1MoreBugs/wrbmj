@@ -8,7 +8,7 @@ from sqlmodel import Session
 
 from app.core.config import settings
 from app.core.db import get_engine
-from app.utils.connection_manager import WsConnectionManager
+from app.api.utils.connection_manager import WsConnectionManager
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
