@@ -16,7 +16,7 @@ class NotesInDb(BaseNotes, table=True):
     __tablename__ = "notes"
 
     user_id: Annotated[int, Field(foreign_key="users.id")]
-    noteContent: Annotated[str, Field(sa_type=Text)]
+    note_content: Annotated[str, Field(sa_type=Text)]
 
     user: UserInDb = Relationship(back_populates="notes")
 
@@ -26,4 +26,9 @@ class NotesOutShort(BaseNotes):
 
 
 class NotesOutInDetailed(BaseNotes):
-    noteContent: str
+    note_content: str
+
+
+class NotesEdit(SQLModel):
+    title_name: Optional[str] = Field(max_length=84)
+    note_content: str

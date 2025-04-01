@@ -1,5 +1,7 @@
+import datetime
+
 from sqlalchemy import Select
-from sqlmodel import Session, select
+from sqlmodel import Session, select, update
 
 from app.models import UserInDb
 from app.models.notes import NotesOutInDetailed, NotesInDb, NotesOutShort
@@ -18,6 +20,33 @@ def get_note_by_id(session: Session, note_id: int) -> NotesOutInDetailed | None:
 
 
 def get_notes_by_username(session: Session, username: str) -> list[NotesOutShort | None]:
-    statement: Select = select(NotesInDb).join(UserInDb, NotesInDb.user_id == UserInDb.id).where(UserInDb.username == username)
+    statement: Select = (
+        select(NotesInDb).join(UserInDb, NotesInDb.user_id == UserInDb.id)
+                         .where(UserInDb.username == username)
+    )
     notes: list[NotesOutInDetailed | None] = list(session.exec(statement).all())
     return notes
+
+
+def update_content_note_by_id(session: Session, note_id: int, note_text: str):
+    statement = update(NotesInDb).where(NotesInDb.id == note_id).values(
+        {
+            "note_content": note_text,
+            "last_update": __get_current_timestamp()
+        }
+    )
+    session.exec(statement)
+
+
+def update_title_note_by_id(session: Session, note_id: int, title_note: str):
+    statement = update(NotesInDb).where(NotesInDb.id == note_id).values(
+        {
+            "title_name": title_note,
+            "last_update": __get_current_timestamp()
+        }
+    )
+    session.exec(statement)
+
+
+def __get_current_timestamp():
+    return datetime.datetime.now()
