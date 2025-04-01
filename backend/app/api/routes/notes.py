@@ -8,8 +8,8 @@ from fastapi import (
 from starlette.websockets import WebSocketDisconnect
 
 from app.api.deps import reusable_oauth2, TokenDep, WsConnectionManagerDep
-from app.api.utils.token_utils import get_token_data_or_raise_exception
-from app.models.notes import NotesOutShort, NotesOutInDetailed
+from app.api.utils.token_utils import check_token_data
+from app.models.notes import NotesOutShort
 
 router = APIRouter(
     prefix="/notes",
@@ -29,8 +29,7 @@ async def get_note_by_id(
         websocket: WebSocket,
         connection_manager: WsConnectionManagerDep,
 ):
-    # check user token
-    get_token_data_or_raise_exception(token=token)
+    check_token_data(token=token)
 
     await connection_manager.connect(websocket)
 
