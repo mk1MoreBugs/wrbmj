@@ -2,15 +2,14 @@ from collections.abc import Generator
 from typing import Annotated
 
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
-
 from sqlmodel import Session
 
+from app.api.utils.CustomOAuth2PasswordBearer import CustomOAuth2PasswordBearer
 from app.core.config import settings
 from app.core.db import get_engine
 from app.api.utils.connection_manager import WsConnectionManager
 
-reusable_oauth2 = OAuth2PasswordBearer(
+reusable_oauth2 = CustomOAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
 )
 

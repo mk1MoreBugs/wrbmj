@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from starlette.testclient import TestClient
 from sqlmodel import Session
 
+from app.core.config import settings
 from app.crud.notes import create_note
-from app.models.notes import NotesInDb
+from app.models.notes import NotesInDb, NotesOutInDetailed
 
 
 def create_test_note(
@@ -21,3 +23,10 @@ def create_test_note(
     create_note(session=db, note=test_note)
 
     return test_note
+
+def create_test_note_from_api(client: TestClient, auth_header: dict[str, str]) -> NotesOutInDetailed:
+    response = client.post(
+        url=f"{settings.API_V1_STR}/notes",
+        headers=auth_header
+    )
+    return NotesOutInDetailed.model_validate(response.json())

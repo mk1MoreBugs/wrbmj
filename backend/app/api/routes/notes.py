@@ -7,9 +7,12 @@ from fastapi import (
 )
 from starlette.websockets import WebSocketDisconnect
 
-from app.api.deps import reusable_oauth2, TokenDep, WsConnectionManagerDep
-from app.api.utils.token_utils import check_token_data
-from app.models.notes import NotesOutShort
+from app.api.deps import reusable_oauth2, TokenDep, WsConnectionManagerDep, SessionDep
+from app.api.utils.note_utils import create_user_note, raise_exception_note_dont_exist, update_note
+from app.api.utils.token_utils import check_token_data, get_token_data_or_raise_exception
+from app.models.notes import NotesOutShort, NotesOutInDetailed, NotesEdit
+from app.crud import notes as notes_crud
+
 
 router = APIRouter(
     prefix="/notes",
@@ -22,12 +25,23 @@ async def get_list_notes_for_user(token: Annotated[str, Depends(reusable_oauth2)
     pass
 
 
-@router.websocket("/edit")
-async def get_note_by_id(
-        note_id: Annotated[str, Path()],
+@router.post("/")
+async def create_note(
+        token: TokenDep,
+        session: SessionDep,
+) -> NotesOutInDetailed:
+    token_data = get_token_data_or_raise_exception(token=token)
+    note_in_db = create_user_note(session=session, username=token_data.username)
+    return NotesOutInDetailed.model_validate(note_in_db)
+
+
+@router.websocket("/{note_id}/edit")
+async def edit_note(
+        note_id: Annotated[int, Path()],
         token: TokenDep,
         websocket: WebSocket,
         connection_manager: WsConnectionManagerDep,
+        session: SessionDep,
 ):
     check_token_data(token=token)
 
@@ -35,21 +49,19 @@ async def get_note_by_id(
 
     # TODO: get note in redis
 
-    # TODO: if  note don't exist in redis then get note from db
+    note = notes_crud.get_note_by_id(session=session, note_id=note_id)
 
-        # TODO: and save in redis
+    # TODO: save it in redis
 
-    # TODO: if note don't exist in db save in redis response body
+    if note is None:
+        raise_exception_note_dont_exist(note_id=note_id)
 
-    # TODO: send note
-    note = ""
     connection_manager.send_personal_message(note, websocket)
 
     try:
+        old_note = NotesEdit.model_validate(note)
         while True:
-            data = await websocket.receive_text()
+            old_note = await update_note(session=session, websocket=websocket, note_id=note_id, old_note=old_note)
 
-
-            await connection_manager.broadcast(message=data)
     except WebSocketDisconnect:
         connection_manager.disconnect(websocket)
