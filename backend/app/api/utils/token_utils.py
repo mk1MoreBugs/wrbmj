@@ -12,7 +12,7 @@ def get_token_data_or_raise_exception(token: str) -> TokenData | None:
 
 
 def check_token_data(token: str) -> None:
-    if is_correct_token_data(token=token):
+    if not is_correct_token_data(token=token):
         __raise_unauthorized_exception()
 
 

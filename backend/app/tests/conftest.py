@@ -40,6 +40,12 @@ def db() -> Generator[Session, None, None]:
 
 @pytest.fixture(scope="package")
 def client() -> Generator[TestClient, None, None]:
+    settings.set_db_host(host="localhost")
+    test_db = "test_database"
+    settings.set_db_path(path=test_db)
+    engine = get_engine(echo=True)
+    SQLModel.metadata.create_all(engine)
+
     with TestClient(app) as c:
         yield c
 

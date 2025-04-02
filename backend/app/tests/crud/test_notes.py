@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from sqlmodel import Session
 
+from app.api.utils.note_utils import get_current_timestamp
 from app.crud import notes
 from app.models.notes import NotesInDb
 from app.tests.utils.notes import create_test_note
@@ -27,6 +28,7 @@ def test__create_note__create_note_and_return_note_from_db__return_note(db: Sess
     assert test_note_in_db.note_content == test_note.note_content
     assert test_note_in_db.title_name == test_note.title_name
     assert test_note_in_db.last_update == test_note.last_update
+    assert len(test_note_in_db.model_dump()) == 4
 
 
 def test__get_note_by_id__get_note_by_non_existent_id__return_none(db: Session) -> None:
@@ -118,6 +120,7 @@ def test__update_content_note_by_id__create_note_and_update_note_content__get_up
         session=db,
     note_id=test_note.id,
     note_text=new_note_content,
+    timestamp=get_current_timestamp(),
     )
     time.sleep(0.25)  # so that there would be different timestamps
 
@@ -142,6 +145,7 @@ def test__update_title_note_by_id__create_note_and_update_note_title__get_update
         session=db,
     note_id=test_note.id,
     title_note=new_note_title,
+    timestamp=get_current_timestamp(),
     )
     time.sleep(0.25)  # so that there would be different timestamps
 

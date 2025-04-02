@@ -27,8 +27,3 @@ class NotesOutShort(BaseNotes):
 
 class NotesOutInDetailed(BaseNotes):
     note_content: str
-
-
-class NotesEdit(SQLModel):
-    title_name: Optional[str] = Field(max_length=84)
-    note_content: str
