@@ -6,13 +6,13 @@ from sqlalchemy.types import Text
 from app.models import UserInDb
 
 
-class BaseNotes(SQLModel):
+class BaseNote(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
     last_update: datetime
     title_name: Optional[str] = Field(max_length=84)
 
 
-class NotesInDb(BaseNotes, table=True):
+class NoteInDb(BaseNote, table=True):
     __tablename__ = "notes"
 
     user_id: Annotated[int, Field(foreign_key="users.id")]
@@ -21,9 +21,9 @@ class NotesInDb(BaseNotes, table=True):
     user: UserInDb = Relationship(back_populates="notes")
 
 
-class NotesOutShort(BaseNotes):
+class NoteOutShort(BaseNote):
     shortDescription: str
 
 
-class NotesOutInDetailed(BaseNotes):
+class NoteOutInDetailed(BaseNote):
     note_content: str

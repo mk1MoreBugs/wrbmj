@@ -11,7 +11,7 @@ from fastapi.websockets import WebSocket
 from app.api.deps import reusable_oauth2, TokenDep, WsConnectionManagerDep, SessionDep
 from app.api.utils.note_utils import create_user_note, raise_exception_note_dont_exist, update_note_from_ws
 from app.api.utils.token_utils import check_token_data, get_token_data_or_raise_exception
-from app.models.notes import NotesOutShort, NotesOutInDetailed
+from app.models.notes import NoteOutShort, NoteOutInDetailed
 from app.crud import notes as notes_crud
 
 
@@ -22,7 +22,7 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_list_notes_for_user(token: Annotated[str, Depends(reusable_oauth2)]) -> list[NotesOutShort]:
+async def get_list_notes_for_user(token: Annotated[str, Depends(reusable_oauth2)]) -> list[NoteOutShort]:
     pass
 
 
@@ -30,10 +30,10 @@ async def get_list_notes_for_user(token: Annotated[str, Depends(reusable_oauth2)
 async def create_note(
         token: TokenDep,
         session: SessionDep,
-) -> NotesOutInDetailed:
+) -> NoteOutInDetailed:
     token_data = get_token_data_or_raise_exception(token=token)
     note_in_db = create_user_note(session=session, username=token_data.username)
-    return NotesOutInDetailed.model_validate(note_in_db)
+    return NoteOutInDetailed.model_validate(note_in_db)
 
 
 @router.websocket("/{note_id}/edit")
@@ -51,7 +51,7 @@ async def edit_note(
     # TODO: get note in redis
 
     note_from_db = notes_crud.get_note_by_id(session=session, note_id=note_id)
-    note_out_in_detailed = NotesOutInDetailed.model_validate(note_from_db)
+    note_out_in_detailed = NoteOutInDetailed.model_validate(note_from_db)
 
     # TODO: save it in redis
 

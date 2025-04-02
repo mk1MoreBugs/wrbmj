@@ -10,16 +10,16 @@ from sqlmodel import Session
 from app.api.deps import WsConnectionManagerDep
 from app.crud.users import get_user_by_username
 from app.crud import notes as notes_crud
-from app.models.notes import NotesInDb, NotesOutInDetailed
+from app.models.notes import NoteInDb, NoteOutInDetailed
 
 
 def create_user_note(
         session: Session,
         username: str,
         note_content: str = "",
-) -> NotesInDb:
+) -> NoteInDb:
     user = get_user_by_username(session=session, username=username)
-    new_note = NotesInDb(
+    new_note = NoteInDb(
         last_update=datetime.datetime.now(),
         user_id=user.id,
         note_content=note_content,
@@ -40,10 +40,10 @@ async def update_note_from_ws(
         websocket: WebSocket,
         connection_manager: WsConnectionManagerDep,
         note_id: int,
-        old_note: NotesOutInDetailed,
-) -> NotesOutInDetailed:
+        old_note: NoteOutInDetailed,
+) -> NoteOutInDetailed:
     note_from_websocket = await websocket.receive_json()
-    new_note = NotesOutInDetailed.model_validate_json(note_from_websocket, strict=True)
+    new_note = NoteOutInDetailed.model_validate_json(note_from_websocket, strict=True)
     current_timestamp = get_current_timestamp()
     new_note.last_update = current_timestamp
 
@@ -65,8 +65,8 @@ def get_current_timestamp():
 def update_db_fields(
         session: Session,
         note_id: int,
-        old_note: NotesOutInDetailed,
-        new_note: NotesOutInDetailed,
+        old_note: NoteOutInDetailed,
+        new_note: NoteOutInDetailed,
 ):
     if old_note.note_content != new_note.note_content:
         notes_crud.update_content_note_by_id(

@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from app.core.config import settings
-from app.models.notes import NotesOutInDetailed
+from app.models.notes import NoteOutInDetailed
 from app.tests.utils.notes import create_test_note_from_api
 from app.tests.utils.users import get_unique_username, create_test_user_and_get_auth_header
 
@@ -26,7 +26,7 @@ def test__edit_note__create_note_and_load_note__get_empty_note(client: TestClien
     )
     with websocket_connect as websocket:
         data_websocket: str = websocket.receive_json()
-        notes_out_in_detailed: NotesOutInDetailed = NotesOutInDetailed.model_validate_json(data_websocket)
+        notes_out_in_detailed: NoteOutInDetailed = NoteOutInDetailed.model_validate_json(data_websocket)
 
         assert notes_out_in_detailed.last_update == test_note.last_update
         assert notes_out_in_detailed.id == test_note.id
@@ -62,7 +62,7 @@ def test__edit_note__create_note_and_edit_note__get_updated_note(client: TestCli
         websocket.receive_json()
         websocket.send_json(updated_note)
         data_websocket: str = websocket.receive_json()
-        notes_out_in_detailed: NotesOutInDetailed = NotesOutInDetailed.model_validate_json(data_websocket)
+        notes_out_in_detailed: NoteOutInDetailed = NoteOutInDetailed.model_validate_json(data_websocket)
 
         assert notes_out_in_detailed.last_update != test_note.last_update
         assert notes_out_in_detailed.id == test_note.id

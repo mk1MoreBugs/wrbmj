@@ -5,7 +5,7 @@ from sqlmodel import Session
 
 from app.api.utils.note_utils import get_current_timestamp
 from app.crud import notes
-from app.models.notes import NotesInDb
+from app.models.notes import NoteInDb
 from app.tests.utils.notes import create_test_note
 from app.tests.utils.users import get_unique_username, create_test_user
 
@@ -14,7 +14,7 @@ def test__create_note__create_note_and_return_note_from_db__return_note(db: Sess
     username = get_unique_username(unique_usernames=unique_usernames)
     test_user = create_test_user(db=db, username=username, plain_password="plain_password")
     test_note_content = "note content"
-    test_note = NotesInDb(
+    test_note = NoteInDb(
         user_id=test_user.id,
         last_update=datetime.now(),
         note_content=test_note_content,
@@ -41,19 +41,19 @@ def test__create_note__create_many_notes_and_return_notes_from_db__return_notes(
     test_user = create_test_user(db=db, username=username, plain_password="plain_password")
     test_note_content = "note content"
     test_notes = [
-        NotesInDb(
+        NoteInDb(
         user_id=test_user.id,
         last_update=datetime.now(),
         note_content=f"{test_note_content}1",
         title_name="Title name",
         ),
-        NotesInDb(
+        NoteInDb(
             user_id=test_user.id,
             last_update=datetime.now(),
             note_content=f"{test_note_content}2",
             title_name="Title name",
         ),
-        NotesInDb(
+        NoteInDb(
             user_id=test_user.id,
             last_update=datetime.now(),
             note_content=f"{test_note_content}3",
@@ -75,19 +75,19 @@ def test__create_note__create_note_for_many_users__return_notes_of_correct_user(
     test_user2 = create_test_user(db=db, username=username2, plain_password="plain_password")
     test_note_content = "note content"
     test_notes = [
-        NotesInDb(
+        NoteInDb(
             user_id=test_user1.id,
             last_update=datetime.now(),
             note_content=f"{test_note_content}1",
             title_name="Title name",
         ),
-        NotesInDb(
+        NoteInDb(
             user_id=test_user2.id,
             last_update=datetime.now(),
             note_content=f"{test_note_content}2",
             title_name="Title name",
         ),
-        NotesInDb(
+        NoteInDb(
             user_id=test_user1.id,
             last_update=datetime.now(),
             note_content=f"{test_note_content}3",
