@@ -104,6 +104,14 @@ def test__create_note__create_note_for_many_users__return_notes_of_correct_user(
     assert len(test_notes_by_username2) == 1
 
 
+def test__get_notes_by_username__get_notes_by_username__return_empty_list(db: Session, unique_usernames: set[str]) -> None:
+    username = get_unique_username(unique_usernames=unique_usernames)
+    test_user = create_test_user(db=db, username=username, plain_password="plain_password")
+
+    test_notes_by_username = notes.get_notes_by_username(session=db, username=test_user.username)
+    assert len(test_notes_by_username) == 0
+
+
 def test__update_content_note_by_id__create_note_and_update_note_content__get_updated_field(db: Session, unique_usernames: set[str]) -> None:
     username = get_unique_username(unique_usernames=unique_usernames)
     test_user = create_test_user(db=db, username=username, plain_password="plain_password")

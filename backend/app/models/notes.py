@@ -22,7 +22,7 @@ class NoteInDb(BaseNote, table=True):
 
 
 class NoteOutShort(BaseNote):
-    shortDescription: str
+    short_description: str
 
 
 class NoteOutInDetailed(BaseNote):

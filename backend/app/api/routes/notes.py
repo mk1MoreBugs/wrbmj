@@ -2,7 +2,6 @@ from typing import Annotated
 
 from fastapi import (
     APIRouter,
-    Depends,
     Path,
     WebSocketDisconnect,
 )
@@ -22,8 +21,13 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_list_notes_for_user(token: Annotated[str, Depends(reusable_oauth2)]) -> list[NoteOutShort]:
-    pass
+async def get_list_notes_for_user(
+        token: TokenDep,
+        session: SessionDep,
+) -> list[NoteOutShort]:
+    token_data = get_token_data_or_raise_exception(token=token)
+    list_of_notes = notes_crud.get_notes_by_username(session=session, username=token_data.username)
+    return list_of_notes
 
 
 @router.post("/")

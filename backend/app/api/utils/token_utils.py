@@ -16,17 +16,17 @@ def check_token_data(token: str) -> None:
         __raise_unauthorized_exception()
 
 
-def is_correct_token_data(token: str) -> bool:
-    token_data: TokenData | None = decode_jwt_token(token=token)
-    if token_data is None:
-        return False
-    else:
-        return True
-
-
 def __raise_unauthorized_exception():
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+
+def is_correct_token_data(token: str) -> bool:
+    token_data: TokenData | None = decode_jwt_token(token=token)
+    if token_data is None:
+        return False
+    else:
+        return True
