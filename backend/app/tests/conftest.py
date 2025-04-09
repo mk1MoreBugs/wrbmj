@@ -3,6 +3,8 @@ from collections.abc import Generator
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
+from redis.asyncio.client import Redis
+
 from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
@@ -48,6 +50,10 @@ def client() -> Generator[TestClient, None, None]:
 
     with TestClient(app) as c:
         yield c
+
+@pytest.fixture(scope="package")
+def redis() -> Redis:
+    return Redis()
 
 
 @pytest.fixture()

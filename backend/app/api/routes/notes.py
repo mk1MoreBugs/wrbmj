@@ -7,7 +7,7 @@ from fastapi import (
 )
 from fastapi.websockets import WebSocket
 
-from app.api.deps import reusable_oauth2, TokenDep, WsConnectionManagerDep, SessionDep
+from app.api.deps import TokenDep, WsConnectionManagerDep, SessionDep, RedisDep
 from app.api.utils.note_utils import create_user_note, raise_exception_note_dont_exist, update_note_from_ws
 from app.api.utils.token_utils import check_token_data, get_token_data_or_raise_exception
 from app.models.notes import NoteOutShort, NoteOutInDetailed
@@ -47,6 +47,7 @@ async def edit_note(
         websocket: WebSocket,
         connection_manager: WsConnectionManagerDep,
         session: SessionDep,
+        redis: RedisDep,
 ):
     check_token_data(token=token)
 
