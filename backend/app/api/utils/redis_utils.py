@@ -12,11 +12,15 @@ async def get_note_in_redis(
 ) -> NoteOutInDetailed | None:
     note_id_in_redis = PREFIX_STR + str(note_id)
     note_id_detailed_bytes: bytes = await redis.get(note_id_in_redis)
+
     if note_id_detailed_bytes is None:
         return None
-    note_id_detailed_json = note_id_detailed_bytes.decode()
-    note_in_detailed = NoteOutInDetailed.model_validate_json(note_id_detailed_json)
-    return note_in_detailed
+    return note_bytes_to_model(note_bytes=note_id_detailed_bytes)
+
+
+def note_bytes_to_model(note_bytes: bytes) -> NoteOutInDetailed:
+    note_json: str = note_bytes.decode()
+    return NoteOutInDetailed.model_validate_json(note_json)
 
 
 async def set_note_in_redis(
@@ -25,7 +29,11 @@ async def set_note_in_redis(
         note_id_detailed: NoteOutInDetailed,
 ) -> None:
     note_id_in_redis = PREFIX_STR + str(note_id)
+    note_id_detailed_bytes = note_model_to_bytes(note_model=note_id_detailed)
 
-    note_id_detailed_json = note_id_detailed.model_dump_json()
-    note_id_detailed_bytes = note_id_detailed_json.encode()
     await redis.set(note_id_in_redis, note_id_detailed_bytes)
+
+
+def note_model_to_bytes(note_model: NoteOutInDetailed) -> bytes:
+    note_json = note_model.model_dump_json()
+    return note_json.encode()

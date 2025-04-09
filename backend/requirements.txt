@@ -25,6 +25,7 @@ bcrypt
 
 # Tests
 pytest
+pytest-asyncio
 httpx
 
 mypy
