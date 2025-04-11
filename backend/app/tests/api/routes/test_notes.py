@@ -1,10 +1,14 @@
 import json
+import time
 
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
+from redis.asyncio import Redis
+from sqlalchemy.orm import Session
 from starlette.testclient import WebSocketDenialResponse
 
+from app.api.utils import redis_utils
 from app.core.config import settings
 from app.models.notes import NoteOutInDetailed
 from app.tests.utils.notes import create_test_note_from_api
@@ -40,7 +44,26 @@ def test__get_list_notes_for_user__make_request_without_auth_token__return_401_s
     assert response_body["detail"] == "Not authenticated"
 
 
-def test__edit_note__create_note_and_load_note__get_empty_note(client: TestClient, unique_usernames: str):
+def test__edit_note__try_get_non_existent_note__get_exception(client: TestClient, unique_usernames: str):
+    username = get_unique_username(unique_usernames=unique_usernames)
+    password = "plain_password"
+    auth_header = create_test_user_and_get_auth_header(
+        client=client,
+        username=username,
+        plain_password=password,
+    )
+
+    websocket_connect = client.websocket_connect(
+            url=f"{settings.API_V1_STR}/notes/{0}/edit",
+            headers=auth_header,
+    )
+    with pytest.raises(WebSocketDenialResponse):
+        with websocket_connect as websocket:
+            websocket.receive_json()
+
+
+@pytest.mark.asyncio
+async def test__edit_note__create_note_and_load_note__get_empty_note(client: TestClient, redis: Redis, unique_usernames: str):
     username = get_unique_username(unique_usernames=unique_usernames)
     password = "plain_password"
     auth_header = create_test_user_and_get_auth_header(
@@ -49,6 +72,7 @@ def test__edit_note__create_note_and_load_note__get_empty_note(client: TestClien
         plain_password=password,
     )
     test_note = create_test_note_from_api(client=client, auth_header=auth_header)
+    await redis.flushdb()
 
     websocket_connect = client.websocket_connect(
             url=f"{settings.API_V1_STR}/notes/{test_note.id}/edit",
@@ -57,6 +81,9 @@ def test__edit_note__create_note_and_load_note__get_empty_note(client: TestClien
     with websocket_connect as websocket:
         data_websocket: str = websocket.receive_json()
         notes_out_in_detailed: NoteOutInDetailed = NoteOutInDetailed.model_validate_json(data_websocket)
+
+        notes_in_redis = await redis_utils.get_note_in_redis(redis=redis, note_id=test_note.id)
+        assert notes_in_redis is not None
 
         assert notes_out_in_detailed.last_update == test_note.last_update
         assert notes_out_in_detailed.id == test_note.id
@@ -99,6 +126,46 @@ def test__edit_note__create_note_and_edit_note__get_updated_note(client: TestCli
         assert notes_out_in_detailed.title_name == new_note_title
         assert notes_out_in_detailed.note_content == new_note_content
         assert len(notes_out_in_detailed.model_dump()) == 4
+
+
+def test__edit_note__create_note_and_edit_note_and_check_in_db_through_reconnection__get_updated_note(client: TestClient, unique_usernames: str):
+    # TODO: unreliable test!
+    username = get_unique_username(unique_usernames=unique_usernames)
+    password = "plain_password"
+    auth_header = create_test_user_and_get_auth_header(
+        client=client,
+        username=username,
+        plain_password=password,
+    )
+
+    test_note = create_test_note_from_api(client=client, auth_header=auth_header)
+    new_note_content = "new note content"
+    new_note_title = "new note title"
+
+    with client.websocket_connect(
+        url=f"{settings.API_V1_STR}/notes/{test_note.id}/edit",
+        headers=auth_header,
+    ) as websocket:
+        updated_note = test_note.model_copy(
+            update={
+                "note_content": new_note_content,
+                "title_name": new_note_title,
+            }
+        ).model_dump_json()
+        websocket.receive_json()
+        websocket.send_json(updated_note)
+
+    with client.websocket_connect(
+            url=f"{settings.API_V1_STR}/notes/{test_note.id}/edit",
+            headers=auth_header,
+    ) as websocket:
+        note_in_db = websocket.receive_json()
+        note_in_db_model: NoteOutInDetailed = NoteOutInDetailed.model_validate_json(note_in_db)
+
+        assert note_in_db_model.last_update != test_note.last_update
+        assert note_in_db_model.id == test_note.id
+        assert note_in_db_model.title_name == new_note_title
+        assert note_in_db_model.note_content == new_note_content
 
 
 def test__edit_note__client_send_data_without_required_fields__get_validation_exception(client: TestClient, unique_usernames: str):

@@ -26,10 +26,10 @@ def note_bytes_to_model(note_bytes: bytes) -> NoteOutInDetailed:
 async def set_note_in_redis(
         redis: Redis,
         note_id: int,
-        note_id_detailed: NoteOutInDetailed,
+        note_in_detailed: NoteOutInDetailed,
 ) -> None:
     note_id_in_redis = PREFIX_STR + str(note_id)
-    note_id_detailed_bytes = note_model_to_bytes(note_model=note_id_detailed)
+    note_id_detailed_bytes = note_model_to_bytes(note_model=note_in_detailed)
 
     await redis.set(note_id_in_redis, note_id_detailed_bytes)
 
@@ -37,3 +37,12 @@ async def set_note_in_redis(
 def note_model_to_bytes(note_model: NoteOutInDetailed) -> bytes:
     note_json = note_model.model_dump_json()
     return note_json.encode()
+
+
+async def get_and_delete_note_in_redis(
+        redis: Redis,
+        note_id: int,
+) -> NoteOutInDetailed:
+    note_id_in_redis = PREFIX_STR + str(note_id)
+    note_id_detailed_bytes: bytes = await redis.getdel(note_id_in_redis)
+    return note_bytes_to_model(note_bytes=note_id_detailed_bytes)

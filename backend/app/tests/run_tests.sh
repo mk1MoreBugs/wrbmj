@@ -7,7 +7,7 @@ docker exec -it wrbmj-db-1 \
 
 pytest . -s --lf
 
-#after tests:
+# after tests:
 docker exec -it wrbmj-db-1 \
         psql -U postgres \
         -c "DROP DATABASE test_database;"

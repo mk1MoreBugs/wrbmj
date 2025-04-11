@@ -21,7 +21,7 @@ def get_db() -> Generator[Session, None, None]:
 
 def get_redis() -> Redis:
     return Redis(
-        host=settings.REDIS_DB,
+        host=settings.REDIS_SERVER,
         port=settings.REDIS_PORT,
         db=settings.REDIS_DB,
         username=settings.REDIS_USER,

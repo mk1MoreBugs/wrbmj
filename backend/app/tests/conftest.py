@@ -13,7 +13,7 @@ from app.core.db import SQLModel
 from ..models.users import UserUpload
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def db() -> Generator[Session, None, None]:
     """
     before crud tests:
@@ -53,7 +53,7 @@ def client() -> Generator[TestClient, None, None]:
         yield c
 
 
-@pytest_asyncio.fixture(loop_scope="package")
+@pytest_asyncio.fixture(loop_scope="session")
 async def redis() -> Redis:
     return Redis()
 
