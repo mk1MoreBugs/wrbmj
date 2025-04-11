@@ -2,6 +2,7 @@ import os
 import secrets
 import warnings
 from typing import Annotated, Any, Literal
+from typing_extensions import Self
 
 from pydantic import (
     AnyUrl,
@@ -11,7 +12,6 @@ from pydantic import (
     model_validator,
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing_extensions import Self
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -54,8 +54,8 @@ class Settings(BaseSettings):
             return f.readline()
 
 
-
     PROJECT_NAME: str
+
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
@@ -82,6 +82,13 @@ class Settings(BaseSettings):
 
     def set_db_host(self, host:str):
         self.POSTGRES_SERVER = host
+
+
+    REDIS_SERVER: str
+    REDIS_PORT: int
+    REDIS_USER: str | None = None
+    REDIS_PASSWORD: str | None = None
+    REDIS_DB: str = ""
 
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:

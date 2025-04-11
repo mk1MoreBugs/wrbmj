@@ -8,13 +8,13 @@ from app.crud import users
 from app.models import UserInDb
 
 
-def create_test_user(db: Session, username: str, plain_password: str):
+def create_test_user(db: Session, username: str, plain_password: str) -> UserInDb:
     users_for_write_db = UserInDb(
         username=username,
         hashed_password=get_password_hash(password=plain_password),
         photo_file_name="path/to/file"
     )
-    users.create_user(session=db, user=users_for_write_db)
+    return users.create_user(session=db, user=users_for_write_db)
 
 
 def get_unique_username(unique_usernames) -> str:
@@ -46,3 +46,21 @@ def get_auth_header(
     )
     auth_token: dict[str, str] = response.json()
     return {"Authorization": "Bearer " + auth_token["access_token"]}
+
+
+def create_test_user_and_get_auth_header(
+        client: TestClient,
+        username: str,
+        plain_password: str,
+) -> dict[str, str]:
+    request_data = {
+        "username": username,
+        "plain_password": plain_password,
+        "photo_file": "c3RyaW5n",  # In the future, use the base64 encode when sending the object
+    }
+    client.post(
+        url=f"{settings.API_V1_STR}/users/create",
+        json=request_data
+    )
+
+    return get_auth_header(client=client, username=username, plain_password=plain_password)

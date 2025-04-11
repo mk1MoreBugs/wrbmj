@@ -3,6 +3,7 @@
 
 # FastAPI
 fastapi[all]
+websockets
 
 # Pydantic
 pydantic
@@ -24,6 +25,7 @@ bcrypt
 
 # Tests
 pytest
+pytest-asyncio
 httpx
 
 mypy

@@ -1,8 +1,11 @@
 from collections.abc import Generator
 
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlmodel import Session
+from redis.asyncio.client import Redis
+
 from ..core.config import settings
 from app.core.db import get_engine
 from app.main import app
@@ -10,7 +13,7 @@ from app.core.db import SQLModel
 from ..models.users import UserUpload
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="session")
 def db() -> Generator[Session, None, None]:
     """
     before crud tests:
@@ -40,8 +43,19 @@ def db() -> Generator[Session, None, None]:
 
 @pytest.fixture(scope="package")
 def client() -> Generator[TestClient, None, None]:
+    settings.set_db_host(host="localhost")
+    test_db = "test_database"
+    settings.set_db_path(path=test_db)
+    engine = get_engine(echo=True)
+    SQLModel.metadata.create_all(engine)
+
     with TestClient(app) as c:
         yield c
+
+
+@pytest_asyncio.fixture(loop_scope="session")
+async def redis() -> Redis:
+    return Redis()
 
 
 @pytest.fixture()
