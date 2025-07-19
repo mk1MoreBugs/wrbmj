@@ -1,9 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap");
 @import "tailwindcss";
 
-
 @theme {
-
   --color-base-100: oklch(13% 0.028 261.692);
   --color-base-200: oklch(21% 0.034 264.665);
   --color-base-300: oklch(27% 0.033 256.848);
@@ -32,24 +30,23 @@
   --border: 1.5px;
 
   /* Шрифты */
-    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-    --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    --font-serif: Georgia, ui-serif, serif;
-    --font-script: Great Vibes, cursive;
-    
-    /* Размеры шрифтов */
-    --text-display: 2.5rem;
-    --text-h1: 2rem;
-    --text-h2: 1.75rem;
-    --text-h3: 1.5rem;
-    --text-body-lg: 1.125rem;
-    --text-body: 1rem;
-    --text-caption: 0.875rem;
-    --text-code: 0.9em;
-    
-    /* Межстрочные интервалы */
-    --leading-tight: 1.25;
-    --leading-normal: 1.5;
-    --leading-relaxed: 1.7;
-}
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-serif: Georgia, ui-serif, serif;
+  --font-script: Great Vibes, cursive;
 
+  /* Размеры шрифтов */
+  --text-display: 2.5rem;
+  --text-h1: 2rem;
+  --text-h2: 1.75rem;
+  --text-h3: 1.5rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-caption: 0.875rem;
+  --text-code: 0.9em;
+
+  /* Межстрочные интервалы */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+}
