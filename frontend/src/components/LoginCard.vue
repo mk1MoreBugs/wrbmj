@@ -11,17 +11,18 @@ const handlePasswordInput = (newValue: string) => {
 </script>
 
 <template>
-  <div class="w-96 flex flex-col">
+  <div class="w-96 flex flex-col bg-base-100">
     <input 
       class="block w-full p-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm min-h-[54px]" 
       type="text"
-      v-model.trim="userCredentials.username" />
-        <PasswordInput
-          id=""
-          label=""
-          :value=userCredentials.password
-          @update:value="handlePasswordInput"
-      />
+      v-model.trim="userCredentials.username"
+    />
+    <PasswordInput
+      id=""
+      label=""
+      :value=userCredentials.password
+      @update:value="handlePasswordInput"
+    />
   </div>
 
   <div class="w-96 flex flex-row">

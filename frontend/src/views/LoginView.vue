@@ -3,5 +3,5 @@ import LoginCard from "@/components/LoginCard.vue"
 </script>
 
 <template>
-  <LoginCard> </LoginCard>
+  <LoginCard/>
 </template>

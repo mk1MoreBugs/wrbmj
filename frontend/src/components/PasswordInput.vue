@@ -37,19 +37,25 @@ const handleInput = (event: Event) => {
       :type="inputType"
       :value="value"
       @input="handleInput"
-      class="block w-full p-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm min-h-[54px]"
+      class="
+        block w-full p-2 min-h-[58px]
+        border border-secondary
+        rounded-field
+        shadow-md/20
+        font-mono text-body text-white
+        focus:border-transparent focus:outline-neutral focus:outline-3"
+        
       v-bind="$attrs"
     />
 
     <button
       type="button"
-      class="absolute inset-y-0 right-0 px-3 flex items-center justify-center max-w-[48px]"
+      class="absolute inset-y-0 right-0 px-3 flex items-center justify-center max-w-[48px] bg-white"
       @click="togglePasswordVisibility"
       :title="showPassword ? 'Hide password' : 'Show password'"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
     >
-      <EyeCloseIcon
-        v-if="showPassword"/>
+      <EyeCloseIcon v-if="showPassword"/>
       <EyeIcon v-else/>
     </button>
   </div>
