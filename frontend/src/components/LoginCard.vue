@@ -1,13 +1,27 @@
 <script setup lang="ts">
 import { reactive } from "vue"
 import type { UserCredentials } from "@/models/UserCredentials.ts"
+import PasswordInput from "@/components/PasswordInput.vue"
+
 const userCredentials = reactive<UserCredentials>({ username: "", password: "" })
+
+const handlePasswordInput = (newValue: string) => {
+  userCredentials.password = newValue;
+};
 </script>
 
 <template>
   <div class="w-96 flex flex-col">
-    <input class="border-2 border-solid" type="text" v-model="userCredentials.username" />
-    <input class="border-2 border-solid" type="password" v-model="userCredentials.password" /> <!--Replace with a separate component -->
+    <input 
+      class="block w-full p-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm min-h-[54px]" 
+      type="text"
+      v-model.trim="userCredentials.username" />
+        <PasswordInput
+          id=""
+          label=""
+          :value=userCredentials.password
+          @update:value="handlePasswordInput"
+      />
   </div>
 
   <div class="w-96 flex flex-row">
