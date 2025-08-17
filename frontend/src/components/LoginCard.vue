@@ -11,9 +11,17 @@ const handlePasswordInput = (newValue: string) => {
 </script>
 
 <template>
-  <div class="w-96 flex flex-col bg-base-100">
+  <div class="w-96 flex flex-col">
     <input 
-      class="block w-full p-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm min-h-[54px]" 
+      class="
+        bg-neutral
+        flex justify-between
+        block m-1 min-h-[58px] h-[68px]
+        rounded-field
+        shadow-md/20
+        overflow-hidden
+        focus-within:border-neutral focus-within:outline-secondary focus-within:outline-3
+      " 
       type="text"
       v-model.trim="userCredentials.username"
     />

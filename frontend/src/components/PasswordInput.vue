@@ -31,32 +31,39 @@ const handleInput = (event: Event) => {
 </script>
 
 <template>
-  <div class="relative">
+  <div 
+    class="
+      bg-neutral
+      flex justify-between
+      block m-1 min-h-[58px] h-[68px]
+      rounded-field
+      shadow-md/20
+      overflow-hidden
+      focus-within:outline-secondary focus-within:outline-3
+    "
+  >
     <input
       :id="id"
       :type="inputType"
       :value="value"
       @input="handleInput"
       class="
-        block w-full p-2 min-h-[58px]
-        border border-secondary
-        rounded-field
-        shadow-md/20
-        font-mono text-body text-white
-        focus:border-transparent focus:outline-neutral focus:outline-3"
-        
+        flex-grow
+        outline-none
+        font-sans text-body text-white
+      "
       v-bind="$attrs"
     />
 
     <button
       type="button"
-      class="absolute inset-y-0 right-0 px-3 flex items-center justify-center max-w-[48px] bg-white"
+      class="m-2 flex items-center size-[48px]"
       @click="togglePasswordVisibility"
       :title="showPassword ? 'Hide password' : 'Show password'"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
     >
-      <EyeCloseIcon v-if="showPassword"/>
-      <EyeIcon v-else/>
+      <EyeCloseIcon class="size-fit" v-if="showPassword"/>
+      <EyeIcon class="size-fit" v-else/>
     </button>
   </div>
 </template>
