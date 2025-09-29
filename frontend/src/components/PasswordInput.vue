@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import type { InputTypeHTMLAttribute } from "vue"
 import EyeIcon from '@/assets/icons/eye.vue'
-import EyeCloseIcon from '@/assets/icons/eye-close.vue'
+import EyeIconClose from '@/assets/icons/eye-close.vue'
 
 const props = defineProps<{
   id: string
@@ -62,8 +62,8 @@ const handleInput = (event: Event) => {
       :title="showPassword ? 'Hide password' : 'Show password'"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
     >
-      <EyeCloseIcon class="size-fit" v-if="showPassword"/>
-      <EyeIcon class="size-fit" v-else/>
+      <EyeIconClose class="size-fit fill-white" v-if="showPassword"/>
+      <EyeIcon class="size-fit fill-white"  v-else/>
     </button>
   </div>
 </template>
