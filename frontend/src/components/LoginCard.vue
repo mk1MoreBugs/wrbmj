@@ -16,7 +16,7 @@ const handlePasswordInput = (newValue: string) => {
       class="
         bg-neutral
         flex justify-between
-        block m-1 min-h-[58px] h-[68px]
+        m-1 min-h-[58px] h-[68px]
         rounded-field
         shadow-md/20
         overflow-hidden
