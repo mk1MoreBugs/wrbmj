@@ -1,38 +1,39 @@
 import { ref, computed } from "vue"
 import { defineStore } from "pinia"
+import { reactive } from "vue"
+import type { UserCredentials } from "@/models/UserCredentials.ts"
 
 
 export const useAuthStore = defineStore("auth", () => {
-  const loginField = ref<string>('')
-  const passwordField = ref<string>('')
+  const userCredentials = reactive<UserCredentials>({ username: "", password: "" })
 
   const isFormValid = computed<boolean>(() => {
     
-    return loginField.value.length > 0 && passwordField.value.length > 8 // && todo
+    return userCredentials.username.length > 0 && userCredentials.password.length > 8 // && todo
   })
 
-  const setLoginField = (value: string): void => {
-    loginField.value = value
+  const handleUsernameInput = (value: string): void => {
+    userCredentials.username = value
   }
 
-  const setPasswordField = (value: string): void => {
-    passwordField.value = value
-  }
+  const handlePasswordInput = (newValue: string) => {
+  userCredentials.password = newValue;
+}
 
   function login() {
-    //todo
+    console.log('login!') //todo
   }
 
   return {
     // State
-     loginField, passwordField,
+     userCredentials,
      
      //Getters
      isFormValid,
 
      // Actions
-     setLoginField,
-    setPasswordField,
+     handleUsernameInput,
+    handlePasswordInput,
     login 
   }
 })
