@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PasswordInput from "@/components/PasswordInput.vue"
+import LoginInput from "@/components/LoginInput.vue"
 import {useAuthStore} from "@/stores/auth"
 
 import type { UserCredentials } from "@/models/UserCredentials.ts"
@@ -12,23 +13,14 @@ const userCredentials: UserCredentials = store.userCredentials
 const handleSubmit = () => {
   store.login()
 }
-
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
     <div class="w-96 flex flex-col">
-      <input class="
-        bg-neutral
-        flex justify-between
-        m-1 min-h-[58px] h-[68px]
-        rounded-field
-        shadow-md/20
-        overflow-hidden
-        focus-within:border-neutral focus-within:outline-secondary focus-within:outline-3
-      " type="text" v-model.trim="userCredentials.username" />
-
-      <PasswordInput id="" label="" :value=userCredentials.password @update:value="store.handlePasswordInput" />
+      
+      <LoginInput id="login-id" :value=userCredentials.username :error=store.loginError @update:value="store.handleUsernameInput" />
+      <PasswordInput id="password-id" :value=userCredentials.password :error=store.passwordError @update:value="store.handlePasswordInput" />
 
       <button
         type="submit"

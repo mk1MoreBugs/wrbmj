@@ -23,5 +23,5 @@ const handleInput = (value: string) => {
 </script>
 
 <template>
-    <InputField :id=props.id label="Paste password" type="password" :value=props.value @update:value="handleInput"/>
+    <InputField :id=props.id label="Paste login" type="text" :value=props.value @update:value="handleInput"/>
 </template>

@@ -5,6 +5,8 @@ import type { UserCredentials } from "@/models/UserCredentials.ts"
 
 
 export const useAuthStore = defineStore("auth", () => {
+  const passwordError = ref('')
+  const loginError = ref('')
   const userCredentials = reactive<UserCredentials>({ username: "", password: "" })
 
   const isFormValid = computed<boolean>(() => {
@@ -27,6 +29,8 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     // State
      userCredentials,
+     passwordError,
+     loginError,
      
      //Getters
      isFormValid,
