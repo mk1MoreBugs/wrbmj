@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PasswordInput from "@/components/PasswordInput.vue"
+import LoginButton from '@/components/LoginButton.vue'
 import LoginInput from "@/components/LoginInput.vue"
 import {useAuthStore} from "@/stores/auth"
 
@@ -22,12 +23,9 @@ const handleSubmit = () => {
       <LoginInput id="login-id" :value=userCredentials.username :error=store.loginError @update:value="store.handleUsernameInput" />
       <PasswordInput id="password-id" :value=userCredentials.password :error=store.passwordError @update:value="store.handlePasswordInput" />
 
-      <button
-        type="submit"
-        :disabled="!store.isFormValid"
-      >
-        {{ store.isFormValid ? 'Login' : 'Form is inValid' }}
-    </button>
+      <LoginButton class="place-self-center" :isFormValid=store.isFormValid>
+          Login
+      </LoginButton>
     </div>
   </form>
 
