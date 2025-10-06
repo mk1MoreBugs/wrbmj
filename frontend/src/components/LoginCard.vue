@@ -28,9 +28,4 @@ const handleSubmit = () => {
       </LoginButton>
     </div>
   </form>
-
-  <div class="w-96 flex flex-row">
-    <p>username: {{ userCredentials.username }}</p>
-    <p>password: {{ userCredentials.password }}</p>
-  </div>
 </template>
