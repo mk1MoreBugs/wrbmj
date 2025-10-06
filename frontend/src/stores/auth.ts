@@ -15,14 +15,27 @@ export const useAuthStore = defineStore("auth", () => {
   })
 
   const handleUsernameInput = (value: string): void => {
+    setLoginError('')
     userCredentials.username = value
   }
 
   const handlePasswordInput = (newValue: string) => {
-  userCredentials.password = newValue;
+    setPasswordError('')
+    userCredentials.password = newValue
 }
 
+ const setPasswordError = (value: string): void => {
+    passwordError.value = value
+  }
+
+  const setLoginError = (value: string): void => {
+    passwordError.value = value
+  }
+
+
   function login() {
+    setPasswordError('true') //todo
+    console.log(passwordError.value + loginError.value)
     console.log('login!') //todo
   }
 
@@ -38,6 +51,8 @@ export const useAuthStore = defineStore("auth", () => {
      // Actions
      handleUsernameInput,
     handlePasswordInput,
-    login 
+    setPasswordError,
+    setLoginError,
+    login
   }
 })
