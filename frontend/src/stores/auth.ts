@@ -1,16 +1,21 @@
 import { ref, computed } from "vue"
 import { defineStore } from "pinia"
 import { reactive } from "vue"
-import type { UserCredentials } from "@/models/UserCredentials.ts"
 
+import { authApi } from '@/api/auth.ts'
+import type { UserCredentials } from "@/models/UserCredentials.ts"
+import type { AuthResponse, ErrorResponse } from '@/models/ApiResponse'
+import type { AxiosError } from 'axios';
 
 export const useAuthStore = defineStore("auth", () => {
   const passwordError = ref('')
   const loginError = ref('')
   const userCredentials = reactive<UserCredentials>({ username: "", password: "" })
 
+  const token = ref<string | null>(localStorage.getItem('token') || null)
+
   const isFormValid = computed<boolean>(() => {
-    
+
     return userCredentials.username.length > 0 && userCredentials.password.length > 8 // && todo
   })
 
@@ -32,11 +37,35 @@ export const useAuthStore = defineStore("auth", () => {
     passwordError.value = value
   }
 
+  async function login(credentials: UserCredentials): Promise<AuthResponse> {
+     try {
+      const response = await authApi.login(credentials);
+      token.value = response.access_token;
+      localStorage.setItem('token', response.access_token);
+      return response;
 
-  function login() {
-    setPasswordError('true') //todo
-    console.log(passwordError.value + loginError.value)
-    console.log('login!') //todo
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+
+      console.log('Error status:', axiosError.response?.status);
+      console.log('Error data:', axiosError.response?.data);
+
+       if (axiosError.response?.status === 401) {
+        const errorDetail = axiosError.response.data?.detail || 'Invalid credentials';
+        throw new Error(errorDetail);
+      }
+
+      if (axiosError.response?.status) {
+        throw new Error(`Login failed with status: ${axiosError.response.status}`);
+      }
+
+      throw new Error('Network error during login');
+    }
+  }
+
+  function logout() {
+      token.value = null;
+      localStorage.removeItem('token');
   }
 
   return {
@@ -44,7 +73,8 @@ export const useAuthStore = defineStore("auth", () => {
      userCredentials,
      passwordError,
      loginError,
-     
+     token,
+
      //Getters
      isFormValid,
 
@@ -53,6 +83,7 @@ export const useAuthStore = defineStore("auth", () => {
     handlePasswordInput,
     setPasswordError,
     setLoginError,
-    login
+    login,
+    logout
   }
 })
