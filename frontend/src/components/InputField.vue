@@ -44,7 +44,7 @@ const conainerDivClasses = computed(() => [
     'rounded-field',
     'shadow-md/20',
     'overflow-hidden',
-    (props.error ? 'focus-within:outline-error' : 'focus-within:outline-secondary') + ' focus-within:outline-3'
+    (props.error ? 'outline-error ' : 'focus-within:outline-secondary focus-within:') + 'outline-3'
 ])
 </script>
 

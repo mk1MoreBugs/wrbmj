@@ -12,7 +12,11 @@ const store = useAuthStore()
 const userCredentials: UserCredentials = store.userCredentials
 
 const handleSubmit = () => {
-  store.login(store.userCredentials)
+  if (store.isFormValid) {
+    store.login(store.userCredentials)
+  } else {
+    console.log("Form is not Valid")
+  }
 }
 </script>
 
@@ -23,7 +27,7 @@ const handleSubmit = () => {
       <LoginInput id="login-id" :value=userCredentials.username :error=store.loginError @update:value="store.handleUsernameInput" />
       <PasswordInput id="password-id" :value=userCredentials.password :error=store.passwordError @update:value="store.handlePasswordInput" />
 
-      <LoginButton class="place-self-center" :isFormValid=store.isFormValid>
+      <LoginButton class="place-self-center">
           Login
       </LoginButton>
     </div>

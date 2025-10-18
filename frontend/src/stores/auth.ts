@@ -14,9 +14,18 @@ export const useAuthStore = defineStore("auth", () => {
 
   const token = ref<string | null>(localStorage.getItem('token') || null)
 
-  const isFormValid = computed<boolean>(() => {
+  const isFormValid = computed(() => {
+      let formIsCorrect: boolean = true
 
-    return userCredentials.username.length > 0 && userCredentials.password.length > 8 // && todo
+    if (userCredentials.username.length < 3) {
+        loginError.value = 'username < 3'
+        formIsCorrect = false
+    }
+    if (userCredentials.password.length < 8) {
+       passwordError.value = 'password < 8'
+       formIsCorrect = false
+    }
+    return formIsCorrect
   })
 
   const handleUsernameInput = (value: string): void => {
@@ -24,9 +33,9 @@ export const useAuthStore = defineStore("auth", () => {
     userCredentials.username = value
   }
 
-  const handlePasswordInput = (newValue: string) => {
+  const handlePasswordInput = (value: string): void => {
     setPasswordError('')
-    userCredentials.password = newValue
+    userCredentials.password = value
 }
 
  const setPasswordError = (value: string): void => {
@@ -34,7 +43,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   const setLoginError = (value: string): void => {
-    passwordError.value = value
+    loginError.value = value
   }
 
   async function login(credentials: UserCredentials): Promise<AuthResponse> {
@@ -70,16 +79,16 @@ export const useAuthStore = defineStore("auth", () => {
 
   return {
     // State
-     userCredentials,
-     passwordError,
-     loginError,
-     token,
+    userCredentials,
+    passwordError,
+    loginError,
+    token,
 
-     //Getters
-     isFormValid,
+    //Getters
+    isFormValid,
 
-     // Actions
-     handleUsernameInput,
+    // Actions
+    handleUsernameInput,
     handlePasswordInput,
     setPasswordError,
     setLoginError,

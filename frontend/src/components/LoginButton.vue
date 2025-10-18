@@ -1,13 +1,17 @@
 <script setup lang="ts">
+const emit = defineEmits<{
+  (e: "onClick"): void
+}>()
 
-const props = defineProps<{isFormValid: boolean}>()
-
+const handleClick = (): void => {
+    emit("onClick")
+}
 </script>
 
 <template>
     <button
         type="submit"
-        :disabled="!props.isFormValid"
+        @click="handleClick"
         class="
           w-80 h-15 m-2
           flex justify-center items-center
@@ -17,7 +21,7 @@ const props = defineProps<{isFormValid: boolean}>()
         "
     >
         <slot></slot>
-        
+
     </button>
 
 </template>
