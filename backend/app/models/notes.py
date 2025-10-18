@@ -3,7 +3,6 @@ from typing import Optional, Annotated
 
 from sqlmodel import Field, SQLModel, Relationship
 from sqlalchemy.types import Text
-from app.models import UserInDb
 
 
 class BaseNote(SQLModel):
@@ -18,7 +17,13 @@ class NoteInDb(BaseNote, table=True):
     user_id: Annotated[int, Field(foreign_key="users.id")]
     note_content: Annotated[str, Field(sa_type=Text)]
 
-    user: UserInDb = Relationship(back_populates="notes")
+    user: "UserInDb" = Relationship(
+        back_populates="notes",
+        sa_relationship_kwargs={
+            "primaryjoin":"UserInDb.id == NoteInDb.user_id",
+            "foreign_keys":"[NoteInDb.user_id]"
+        }
+    )
 
 
 class NoteOutShort(BaseNote):
