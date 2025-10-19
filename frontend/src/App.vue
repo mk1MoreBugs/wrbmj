@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LoginView from "./views/LoginView.vue"
 </script>
 
 <template>
@@ -9,7 +8,7 @@ import LoginView from "./views/LoginView.vue"
         font-sans text-body text-white
       "
     >
-    <LoginView/>
+    <router-view/>
     </div>
 </template>
 
