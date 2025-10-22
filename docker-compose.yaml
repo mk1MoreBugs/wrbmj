@@ -13,7 +13,7 @@ services:
     secrets: &postgres-secret
       - postgres_password
     volumes:
-      - "./backend/app:/backend/app"
+      - "./backend:/backend"
       - data_storage_volume:/backend/data_storage
 
   db:
@@ -27,13 +27,9 @@ services:
       POSTGRES_PASSWORD_FILE: *postgres-password-file
     env_file: *env-file
     secrets: *postgres-secret
-    ports:
-      - "5432:5432"
 
   redis:
     image: redis:7.4.2-alpine
-    ports:
-      - "6379:6379"
 
   nginx:
     build:
