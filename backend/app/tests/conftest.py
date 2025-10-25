@@ -11,7 +11,7 @@ from app.core.db import get_engine
 from app.main import app
 from app.core.db import SQLModel
 from ..models.users import UserUpload
-
+from app.api.deps import get_redis
 
 @pytest.fixture(scope="session")
 def db() -> Generator[Session, None, None]:
@@ -45,7 +45,7 @@ def client() -> Generator[TestClient, None, None]:
 
 @pytest_asyncio.fixture(loop_scope="session")
 async def redis() -> Redis:
-    return Redis()
+    return get_redis()
 
 
 @pytest.fixture()

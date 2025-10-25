@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    ENVIRONMENT: Literal["local", "staging", "production", "test"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)
@@ -52,14 +52,12 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_PASSWORD_FILE: str | None = None
 
-
     @computed_field  # type: ignore[prop-decorator]
     def POSTGRES_PASSWORD(self) -> str:
         if self.POSTGRES_PASSWORD_FILE and os.path.exists(self.POSTGRES_PASSWORD_FILE):
             with open(self.POSTGRES_PASSWORD_FILE, encoding="utf-8") as f:
                 return f.readline().strip()
         return os.getenv("POSTGRES_PASSWORD", "")
-
 
     @computed_field  # type: ignore[prop-decorator]
     @property
