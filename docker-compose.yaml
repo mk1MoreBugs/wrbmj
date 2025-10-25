@@ -40,14 +40,6 @@ services:
       - backend
     ports:
       - "80:80"
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./nginx/nginx.conf
-          target: /etc/nginx/nginx.conf
-        - action: sync
-          path: ./nginx/data
-          target: /usr/share/nginx/html
 
 volumes:
   db_volume:
