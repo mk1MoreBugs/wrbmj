@@ -2,3 +2,10 @@ services:
   backend:
     environment:
       ENVIRONMENT: production
+ 
+  nginx:
+    build:
+      context: ./
+      dockerfile: ./nginx/Dockerfile.prod
+    environment:
+      FRONTEND_SERVER_NAME: localhost
