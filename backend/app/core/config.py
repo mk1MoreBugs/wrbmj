@@ -45,7 +45,6 @@ class Settings(BaseSettings):
     def all_cors_origins(self) -> list[str]:
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
 
-
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
@@ -71,16 +70,14 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-
     REDIS_SERVER: str
     REDIS_PORT: int
     REDIS_USER: str | None = None
     REDIS_PASSWORD: str | None = None
     REDIS_DB: str = ""
 
-
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
-        if value == "changethis":
+        if value == "changethis" or not value:
             message = (
                 f'The value of {var_name} is "changethis", '
                 "for security, please change it, at least for deployments."
@@ -94,6 +91,7 @@ class Settings(BaseSettings):
     def _enforce_non_default_secrets(self) -> Self:
         self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
+        self._check_default_secret("POSTGRES_PASSWORD", self.REDIS_PASSWORD)
 
         return self
 
