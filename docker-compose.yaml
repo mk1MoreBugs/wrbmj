@@ -20,7 +20,7 @@ services:
       - app-network
 
   db:
-    image: postgres:17.2-alpine3.21
+    image: postgres:18.0-alpine
     restart: on-failure:3
     shm_size: 128mb
     volumes:
