@@ -6,6 +6,7 @@ services:
     restart: on-failure:3
     depends_on:
       - db
+      - redis
     environment:
       POSTGRES_PASSWORD_FILE: &postgres-password-file /run/secrets/postgres_password
     env_file: &env-file
@@ -13,8 +14,10 @@ services:
     secrets: &postgres-secret
       - postgres_password
     volumes:
-      - "./backend/app:/backend/app"
+      - "./backend:/backend"
       - data_storage_volume:/backend/data_storage
+    networks:
+      - app-network
 
   db:
     image: postgres:17.2-alpine3.21
@@ -27,30 +30,25 @@ services:
       POSTGRES_PASSWORD_FILE: *postgres-password-file
     env_file: *env-file
     secrets: *postgres-secret
-    ports:
-      - "5432:5432"
+    networks:
+      - app-network
 
   redis:
     image: redis:7.4.2-alpine
-    ports:
-      - "6379:6379"
+    networks:
+      - app-network
 
   nginx:
     build:
       context: ./nginx
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.dev
     depends_on:
       - backend
     ports:
       - "80:80"
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./nginx/nginx.conf
-          target: /etc/nginx/nginx.conf
-        - action: sync
-          path: ./nginx/data
-          target: /usr/share/nginx/html
+    networks:
+      - app-network
+    env_file: *env-file
 
 volumes:
   db_volume:
@@ -59,3 +57,7 @@ volumes:
 secrets:
    postgres_password:
      file: db_password.txt
+
+networks:
+  app-network:
+    driver: bridge

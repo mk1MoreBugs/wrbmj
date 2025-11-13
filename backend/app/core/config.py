@@ -29,11 +29,12 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
-    API_V1_STR: str = "/v1"
+    PROJECT_NAME: str
+    API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    ENVIRONMENT: Literal["local", "staging", "production", "test"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)
@@ -44,24 +45,18 @@ class Settings(BaseSettings):
     def all_cors_origins(self) -> list[str]:
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
 
-
-    @staticmethod
-    def __get_postgres_password():
-        path = os.getenv("POSTGRES_PASSWORD_FILE")
-        if path is None:
-            path = "../db_password.txt"
-        with open(path, encoding="utf-8") as f:
-            return f.readline()
-
-
-    PROJECT_NAME: str
-
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = __get_postgres_password()
-    POSTGRES_DB: str = ""
+    POSTGRES_DB: str
+    POSTGRES_PASSWORD_FILE: str | None = None
 
+    @computed_field  # type: ignore[prop-decorator]
+    def POSTGRES_PASSWORD(self) -> str:
+        if self.POSTGRES_PASSWORD_FILE and os.path.exists(self.POSTGRES_PASSWORD_FILE):
+            with open(self.POSTGRES_PASSWORD_FILE, encoding="utf-8") as f:
+                return f.readline().strip()
+        return os.getenv("POSTGRES_PASSWORD", "")
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -75,24 +70,14 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-
-    def set_db_path(self, path:str):
-        self.POSTGRES_DB = path
-
-
-    def set_db_host(self, host:str):
-        self.POSTGRES_SERVER = host
-
-
     REDIS_SERVER: str
     REDIS_PORT: int
     REDIS_USER: str | None = None
     REDIS_PASSWORD: str | None = None
     REDIS_DB: str = ""
 
-
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
-        if value == "changethis":
+        if value == "changethis" or not value:
             message = (
                 f'The value of {var_name} is "changethis", '
                 "for security, please change it, at least for deployments."
@@ -106,6 +91,7 @@ class Settings(BaseSettings):
     def _enforce_non_default_secrets(self) -> Self:
         self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
+        self._check_default_secret("POSTGRES_PASSWORD", self.REDIS_PASSWORD)
 
         return self
 

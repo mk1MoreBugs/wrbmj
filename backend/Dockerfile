@@ -2,6 +2,10 @@ FROM python:3.13.2-slim
 
 WORKDIR /backend
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 EXPOSE 8080

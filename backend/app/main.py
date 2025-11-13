@@ -13,7 +13,7 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 app = FastAPI(
     title=settings.PROJECT_NAME,
     root_path=settings.API_V1_STR,
-    openapi_url="/openapi.json",
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
 
