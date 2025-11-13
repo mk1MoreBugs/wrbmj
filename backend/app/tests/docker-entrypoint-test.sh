@@ -6,7 +6,7 @@ export PGPASSWORD=$(cat /run/secrets/postgres_password)
 cleanup() {
     # after tests:
     psql -h db -U $POSTGRES_USER \
-        -c "DROP DATABASE test_database;"
+        -c "DROP DATABASE IF EXISTS test_database;"
 }
 
 trap cleanup EXIT INT TERM
