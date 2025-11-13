@@ -16,8 +16,8 @@ psycopg[binary,pool]
 # ODM (Object Document Mapper) for MongoDB
 odmantic
 
-# Redis
-redis
+# Valkey
+valkey
 
 # PyJWT, bcrypt
 PyJWT
