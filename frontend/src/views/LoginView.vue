@@ -3,5 +3,11 @@ import LoginCard from "@/components/LoginCard.vue"
 </script>
 
 <template>
-  <LoginCard/>
+  <div>
+    <router-link to="/registration">
+      Регистрация
+    </router-link>
+
+    <LoginCard/>
+  </div>
 </template>
