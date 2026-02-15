@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import RegistrationCard from '@/components/RegistrationCard.vue';
+
+</script>
+
 <template>
   <div class="flex flex-col">
     <div class="flex gap-2 text-caption">
@@ -18,14 +23,11 @@
         Войти
       </router-link>
     </div>
+  </div>
 
   <div class="size-5"></div>
 
 
-    <div class="flex flex-col">
-      <p class="my-2"> Hello world!</p>
-      <p> &lt;Content&gt; </p>
-    </div>
-  </div>
+    <RegistrationCard/>
 
 </template>
