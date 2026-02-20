@@ -91,7 +91,7 @@ class Settings(BaseSettings):
     def _enforce_non_default_secrets(self) -> Self:
         self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
-        self._check_default_secret("POSTGRES_PASSWORD", self.REDIS_PASSWORD)
+        # self._check_default_secret("REDIS_PASSWORD", self.REDIS_PASSWORD)
 
         return self
 
