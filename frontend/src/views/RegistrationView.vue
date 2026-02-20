@@ -27,7 +27,10 @@ import RegistrationCard from '@/components/RegistrationCard.vue';
 
   <div class="size-5"></div>
 
-
-    <RegistrationCard/>
+  <div class="flex flex-col items-center">
+      <h1 class="text-h1">Регистрация</h1>
+      <div class="size-3"></div>
+       <RegistrationCard/>
+  </div>
 
 </template>

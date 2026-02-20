@@ -3,18 +3,24 @@ import { defineStore } from "pinia"
 import { reactive } from "vue"
 
 import { usersApi } from "@/api/users.ts"
-import {fileToBase64} from '@/utils/fileToBase64.ts'
+import { fileToBase64 } from "@/utils/fileToBase64.ts"
 
-import type { UserRegistration } from "@/models/UserRegistration"
+import type { UserRegistrationApiModel, UserRegistrationStoreModel } from "@/models/UserRegistration"
 import type { AuthResponse, ErrorResponse } from "@/models/ApiResponse"
 import type { AxiosError } from "axios"
+
 
 export const useRegistrationStore = defineStore("registration", () => {
   const passwordError = ref("")
   const loginError = ref("")
   const photoError = ref("")
 
-  const userRegistration = reactive<UserRegistration>({ username: "", password: "", photoFile: "" })
+  const userRegistration = reactive<UserRegistrationStoreModel>({
+    username: "",
+    password: "",
+    repeatPassword: "",
+    photoFile: "1111",
+  })
 
   // TODO: Вынести в отдельный метод
   const isFormValid = computed(() => {
@@ -30,8 +36,13 @@ export const useRegistrationStore = defineStore("registration", () => {
       formIsCorrect = false
     }
 
+    if (userRegistration.password !== userRegistration.repeatPassword) {
+      passwordError.value = "Пароли не совпадают"
+      formIsCorrect = false
+    }
+
     if (!userRegistration.photoFile) {
-      photoError.value = 'Фото обязательно'
+      photoError.value = "Фото обязательно"
       formIsCorrect = false
     }
 
@@ -50,13 +61,20 @@ export const useRegistrationStore = defineStore("registration", () => {
     userRegistration.password = value
   }
 
-   const handlePhotoUpload = async (file: File) => {
+  const handleRepeatPasswordInput = (value: string): void => {
+    setPasswordError("")
+    setPhotoError("")
+    userRegistration.repeatPassword = value
+  }
+
+  const handlePhotoUpload = async (file: File) => {
     try {
-      if (!file.type.startsWith('image/')) {
-        throw new Error('Только изображения')
+      if (!file.type.startsWith("image/")) {
+        throw new Error("Только изображения")
       }
-      if (file.size > 5 * 1024 * 1024) { // 5 MB
-        throw new Error('Файл не более 5MB')
+      if (file.size > 5 * 1024 * 1024) {
+        // 5 MB
+        throw new Error("Файл не более 5MB")
       }
 
       const base64 = await fileToBase64(file)
@@ -65,9 +83,9 @@ export const useRegistrationStore = defineStore("registration", () => {
       photoError.value = ""
     } catch (error: unknown) {
       if (error instanceof Error) {
-        photoError.value = error.message;
+        photoError.value = error.message
       } else {
-        photoError.value = String(error);
+        photoError.value = String(error)
       }
     }
   }
@@ -89,7 +107,7 @@ export const useRegistrationStore = defineStore("registration", () => {
     loginError.value = value
   }
 
-  async function registration(registrationData: UserRegistration): Promise<AuthResponse> {
+  async function registration(registrationData: UserRegistrationApiModel): Promise<AuthResponse> {
     try {
       const response = await usersApi.registration(registrationData)
       localStorage.setItem("token", response.access_token)
@@ -125,11 +143,12 @@ export const useRegistrationStore = defineStore("registration", () => {
     // Actions
     handleUsernameInput,
     handlePasswordInput,
+    handleRepeatPasswordInput,
     handlePhotoUpload,
     resetPhoto,
     setPasswordError,
     setLoginError,
     setPhotoError,
-    registration
+    registration,
   }
 })
