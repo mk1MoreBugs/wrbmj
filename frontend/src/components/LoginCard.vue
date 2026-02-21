@@ -39,6 +39,8 @@ const handleSubmit = () => {
         @update:value=store.handlePasswordInput
       />
 
+      <div class="size-3"></div>
+      
       <LoginButton class="place-self-center">
           Login
       </LoginButton>
