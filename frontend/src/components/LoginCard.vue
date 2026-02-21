@@ -24,8 +24,20 @@ const handleSubmit = () => {
   <form @submit.prevent="handleSubmit">
     <div class="w-96 flex flex-col">
 
-      <LoginInput id="login-id" :value=userCredentials.username :error=store.loginError @update:value="store.handleUsernameInput" />
-      <PasswordInput id="password-id" :value=userCredentials.password :error=store.passwordError @update:value="store.handlePasswordInput" />
+      <LoginInput
+        id="login-id"
+        placeholder="Login"
+        :value=userCredentials.username
+        :error=store.loginError
+        @update:value="store.handleUsernameInput"
+      />
+      <PasswordInput
+        id="password-id"
+        placeholder="Пароль"
+        :value=userCredentials.password
+        :error=store.passwordError
+        @update:value=store.handlePasswordInput
+      />
 
       <LoginButton class="place-self-center">
           Login

@@ -29,15 +29,30 @@ const handleSubmit = () => {
   <form @submit.prevent="handleSubmit">
     <div class="w-96 flex flex-col">
 
-      <LoginInput id="login-id" :value=userRegistration.username :error=store.loginError
-        @update:value="store.handleUsernameInput" />
-      <PasswordInput id="password-id" :value=userRegistration.password :error=store.passwordError
-        @update:value="store.handlePasswordInput" />
-      <PasswordInput id="repeat-password-id" :value=userRegistration.repeatPassword :error=store.passwordError
-        @update:value="store.handleRepeatPasswordInput" />
+      <LoginInput
+        id="login-id"
+        placeholder="Login"
+        :value=userRegistration.username
+        :error=store.loginError
+        @update:value="store.handleUsernameInput"
+      />
+      <PasswordInput
+        id="password-id"
+        placeholder="Пароль"
+        :value=userRegistration.password
+        :error=store.passwordError
+        @update:value=store.handlePasswordInput
+      />
+      <PasswordInput
+        id="repeat-password-id"
+        placeholder="Повторите пароль"
+        :value=userRegistration.repeatPassword
+        :error=store.passwordError
+        @update:value=store.handleRepeatPasswordInput
+      />
 
       <div class="size-3"></div>
-      
+
       <LoginButton class="place-self-center">
         Регистрация
       </LoginButton>
