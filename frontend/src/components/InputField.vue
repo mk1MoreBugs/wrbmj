@@ -10,6 +10,7 @@ interface InputProps {
   label: string
   type?: InputTypeHTMLAttribute
   error?: string
+  placeholder?: string
 }
 
 const props = withDefaults(defineProps<InputProps>(),
@@ -51,14 +52,16 @@ const conainerDivClasses = computed(() => [
 <template>
   <div :class="conainerDivClasses">
     <input
+      :placeholder="placeholder"
       :id="id"
       :type="inputType"
       :value="value"
       @input="handleInput"
       class="
-        flex-grow
+        grow
         outline-none
         font-sans text-body text-white
+        px-3
       "
       v-bind="$attrs"
     />

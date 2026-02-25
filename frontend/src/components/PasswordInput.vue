@@ -6,6 +6,7 @@ interface InputProps {
   id: string
   value: string
   error?: string
+  placeholder?: string
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
@@ -23,5 +24,13 @@ const handleInput = (value: string) => {
 </script>
 
 <template>
-    <InputField :id=props.id :error=props.error label="Paste password" type="password" :value=props.value @update:value="handleInput"/>
+    <InputField
+      label="Paste password"
+      type="password"
+      :id=props.id
+      :error=props.error
+      :placeholder=props.placeholder
+      :value=props.value
+      @update:value=handleInput
+    />
 </template>
