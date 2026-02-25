@@ -5,7 +5,7 @@
     <div class="min-h-screen bg-base-100 font-sans text-body text-white">
     <header class="bg-gray-800 p-4 shadow">
       <nav class="container mx-auto flex justify-between items-center">
-        <router-link to="/" class="text-xl font-bold">MyApp</router-link>
+        <router-link to="/" class="text-xl font-bold">wrbmj</router-link>
         <div class="space-x-4">
           <router-link to="/login" class="hover:text-blue-300">Войти</router-link>
         </div>
