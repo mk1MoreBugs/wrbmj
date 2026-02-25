@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
 import PasswordInput from "@/components/PasswordInput.vue"
 import LoginButton from '@/components/LoginButton.vue'
 import LoginInput from "@/components/LoginInput.vue"
@@ -6,19 +8,24 @@ import { useRegistrationStore } from "@/stores/registration.ts"
 
 import type { UserRegistrationStoreModel, UserRegistrationApiModel } from "@/models/UserRegistration.ts"
 
-
+const router = useRouter()
 const store = useRegistrationStore()
 
 const userRegistration: UserRegistrationStoreModel = store.userRegistration
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (store.isFormValid) {
     const userRegistrationApiModel: UserRegistrationApiModel = {
       username: store.userRegistration.username,
       plain_password: store.userRegistration.password,
       photo_file: store.userRegistration.photoFile ?? ''
     }
-    store.registration(userRegistrationApiModel)
+    try {
+      await store.registration(userRegistrationApiModel)
+      router.push('/users/me')
+    } catch(error) {
+      console.error('Login failed', error)
+    }
   } else {
     console.log("Form is not Valid")
   }
