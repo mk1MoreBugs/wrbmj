@@ -18,7 +18,7 @@ export const useNotesStore = defineStore("notes", () => {
       notes.value = response.map((it) => ({
         id: it.id,
         lastUpdate: new Date(it.last_update),
-        titleName: it.title_name,
+        titleName: it.title_name ?? 'Без названия',
         shortDescription: it.short_description,
       }))
     } catch (error: unknown) {
@@ -36,12 +36,14 @@ export const useNotesStore = defineStore("notes", () => {
   async function createNote(): Promise<NoteShortInfo> {
     try {
       const response: NoteResponse = await notesApi.createNote()
-      return {
+      const newNote = {
         id: response.id,
         lastUpdate: new Date(response.last_update),
-        titleName: response.title_name,
+        titleName: response.title_name ?? 'Без названия',
         shortDescription: response.short_description,
       }
+     // notes.value?.unshift(newNote) // TODO: Нужно поменять ответ с сервера
+      return newNote
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.log("Error status:", error.response?.status)

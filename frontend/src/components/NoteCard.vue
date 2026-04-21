@@ -13,6 +13,7 @@ const emit = defineEmits<{
 const formattedDate = computed(() => {
   if (!props.lastUpdate) return 'Дата неизвестна'
   return new Intl.DateTimeFormat('ru-RU', {
+    timeZone: 'Etc/GMT-6', // TODO: поменять на +3, как только разберусь с форматом даты на сервере
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -33,16 +34,16 @@ const handleDelete = (event: MouseEvent) => {
 
 <template>
   <div
-    class="group relative flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-300 cursor-pointer"
+    class="group relative flex flex-col gap-2 rounded-xl border border-neutral bg-primary p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-accent cursor-pointer"
     @click="handleCardClick"
   >
     <div class="flex justify-between items-start gap-2">
-      <h3 class="text-lg font-semibold text-gray-900 line-clamp-1">
+      <h3 class="text-lg font-semibold text-primary-content line-clamp-1">
         {{ titleName }}
       </h3>
       <button
         @click="handleDelete"
-        class="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+        class="text-gray-400 hover:text-error transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
         aria-label="Удалить заметку"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -51,11 +52,11 @@ const handleDelete = (event: MouseEvent) => {
       </button>
     </div>
 
-    <p class="text-sm text-gray-600 line-clamp-3">
+    <p class="text-sm text-secondary line-clamp-3">
       {{ shortDescription }}
     </p>
 
-    <div class="mt-1 text-xs text-gray-400 flex items-center gap-1">
+    <div class="mt-1 text-xs text-neutral-content flex items-center gap-1">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>

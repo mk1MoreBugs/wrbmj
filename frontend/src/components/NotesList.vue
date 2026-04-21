@@ -31,6 +31,7 @@
     try {
       const note = await store.createNote()
       if (note?.id != null) {
+        store.fetchNotes()
         router.push(`/notes/${note.id}`)
       }
     } catch(error) {
@@ -43,9 +44,9 @@
 
 <template>
   <div
-    class="flex flex-col"
+    class="flex flex-col gap-3"
   >
-    <li
+    <div
       v-for="note in notes"
       :key="note.id"
     >
@@ -53,16 +54,23 @@
         v-bind="note"
         @click="handleCardClick"
       />
-    </li>
+    </div>
 
-    <!-- todo: add class="" -->
     <div>
       <button
         type="button"
         @click="handleAddNoteClick"
         title="Add Note"
         aria-label="Add Note"
+        class="
+          w-80 h-15 m-2
+          flex justify-center items-center
+          rounded-xl
+          font-sans text-h2 text-secondary-content
+          bg-secondary
+        "
         :disabled="isCreating"
+
       >
       + Добавить заметку
     </button>
