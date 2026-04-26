@@ -5,3 +5,10 @@ export interface NoteShortInfo {
   titleName: string,
   shortDescription: string,
 }
+
+export interface NoteContent {
+  id: number,
+  last_update: '',
+  title_name: string,
+  note_content: string,
+}
