@@ -1,16 +1,14 @@
 import type { NoteContent } from "@/models/Notes"
 
-export type WebSocketMessage = {
-  data: NoteContent
-}
-
 type NoteUpdateCallback = (note: NoteContent) => void
 
 class WebSocketClient {
   private ws: WebSocket | null = null
   private onNoteUpdate: NoteUpdateCallback | null = null
 
-  connect(url: string): void {
+  connect(url: string, onNoteUpdate: NoteUpdateCallback): void {
+    this.onNoteUpdate = onNoteUpdate
+
     if (this.ws?.readyState === WebSocket.OPEN) return
 
     this.ws = new WebSocket(url)
@@ -19,9 +17,9 @@ class WebSocketClient {
 
     this.ws.onmessage = (event) => {
       try {
-        const message: WebSocketMessage = JSON.parse(event.data)
+        const message: NoteContent = JSON.parse(event.data)
         if (this.onNoteUpdate) {
-          this.onNoteUpdate(message.data)
+          this.onNoteUpdate(message)
         }
       } catch (e) {
         console.error("WS parse error", e)
@@ -36,13 +34,10 @@ class WebSocketClient {
   sendMessage(data: NoteContent): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(data))
+      console.log("WS send message")
     } else {
       console.warn("WebSocket not connected, cannot send message")
     }
-  }
-
-  onNotesUpdate(callback: NoteUpdateCallback): void {
-    this.onNoteUpdate = callback
   }
 
   disconnect(): void {

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { computed } from "vue"
+import { computed, ref } from "vue"
 
 import NotesList from '@/components/NotesList.vue'
 import NoteContentSurface from '@/components/NoteContentSurface.vue'
+
+import type { NoteEditedProps } from "@/models/Notes"
 
 const route = useRoute()
 
@@ -11,14 +13,20 @@ const noteId = computed(() => {
   return Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
 })
 
+const currentEditedNote = ref<NoteEditedProps | undefined>(undefined)
+
+const handleInput = (value: NoteEditedProps) => {
+  currentEditedNote.value = value
+}
+
 </script>
 
 <template>
   <div
     class="flex"
   >
-    <NotesList/>
+    <NotesList :currentEditedNote=currentEditedNote ?? {}/>
     <div class="size-6"></div>
-    <NoteContentSurface :id="noteId"/>
+    <NoteContentSurface :id="noteId" @update-note="handleInput"/>
   </div>
 </template>

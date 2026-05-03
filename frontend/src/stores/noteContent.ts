@@ -6,10 +6,10 @@ import { wsClient } from "@/api/websocket"
 import type { NoteContent } from "@/models/Notes"
 
 export const useNoteContentStore = defineStore("noteContent", () => {
-  const noteContent = ref<NoteContent>()
+  const noteItem = ref<NoteContent>()
 
   function updateNote(note: NoteContent) {
-    noteContent.value = note
+    noteItem.value = note
   }
 
   function updateNoteInServer(note: NoteContent) {
@@ -17,6 +17,9 @@ export const useNoteContentStore = defineStore("noteContent", () => {
   }
 
   function initWebSocket(url: string) {
+    // Удаляем старые данные
+    noteItem.value = undefined
+
     const token: string | null = localStorage.getItem("token") || null
     if (!token) {
       throw Error("Token is invalid!")
@@ -25,8 +28,7 @@ export const useNoteContentStore = defineStore("noteContent", () => {
     // Закрываем предыдущее соединение (важно при смене заметки)
     wsClient.disconnect()
 
-    wsClient.connect(url + `?token=${encodeURIComponent(`Bearer ${token}`)}`)
-    wsClient.onNotesUpdate(updateNote)
+    wsClient.connect(url + `?token=${encodeURIComponent(`${token}`)}`, updateNote)
   }
 
   function closeWebSocket() {
@@ -34,7 +36,7 @@ export const useNoteContentStore = defineStore("noteContent", () => {
   }
 
   return {
-    noteContent,
+    noteItem,
     initWebSocket,
     closeWebSocket,
     updateNote: updateNoteInServer,

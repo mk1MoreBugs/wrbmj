@@ -1,40 +1,71 @@
 <script setup lang="ts">
-import {ref, onMounted, onBeforeUnmount, watch } from 'vue'
-import { storeToRefs } from 'pinia'
+import {onBeforeUnmount, watch, computed } from 'vue'
 
 import { useNoteContentStore } from "@/stores/noteContent"
 
+import type { NoteEditedProps } from "@/models/Notes"
+
+
 const props = defineProps<{id: string}>()
+
+const emit = defineEmits<{
+  (e: "update-note", updatedNote: NoteEditedProps): void
+}>()
 
 const store = useNoteContentStore()
 
-const { noteContent } = storeToRefs(store)
+const noteTitleName = computed(() => store.noteItem?.title_name ?? '')
 
-// Локальная копия для редактирования
-const localNote = ref({ ...noteContent.value })
+const noteContent = computed(() => store.noteItem?.note_content ?? '')
 
-onMounted(() => {
-  const wsUrl = `ws://localhost/api/v1/notes/${props.id}/edit`
-  store.initWebSocket(wsUrl)
-})
+const handleInputTitleName = (event: Event) => {
+  const target = event.target as HTMLInputElement
+
+  store.updateNote(
+    {
+      id: store.noteItem?.id as number,
+      last_update: store.noteItem?.last_update as string,
+      title_name: target.value,
+      note_content: store.noteItem?.note_content as string,
+    }
+  )
+
+  emit('update-note', {
+    title_name: target.value,
+    note_content: store.noteItem?.note_content as string,
+  })
+}
+
+const handleInputContentNote = (event: Event) => {
+  const target = event.target as HTMLInputElement
+
+  store.updateNote(
+    {
+      id: store.noteItem?.id as number,
+      last_update: store.noteItem?.last_update as string,
+      title_name: store.noteItem?.title_name as string,
+      note_content: target.value,
+    }
+  )
+
+  emit('update-note', {
+    title_name: store.noteItem?.title_name as string,
+    note_content: target.value,
+  })
+}
 
 onBeforeUnmount(() => {
   store.closeWebSocket()
 })
 
-watch(noteContent, (newVal) => {
-  localNote.value = { ...newVal }
+// Костыль, чтобы при переключении заметок открывалась нужная
+// (тут по сути 1 компонент для редактирования множества заметок)
+watch(props, () => {
+  if (props.id !== undefined && props.id !== null) {
+    const wsUrl = `ws://localhost/api/v1/notes/${props.id}/edit`
+    store.initWebSocket(wsUrl)
+  }
 }, { immediate: true })
-
-watch(localNote, (newValue) => {
-  store.updateNote({
-    id: newValue.id ?? 0,
-    last_update: newValue.last_update ?? '',
-    title_name: newValue.title_name ?? '',
-    note_content: newValue.note_content ?? '',
-  })
-})
-
 </script>
 
 <template>
@@ -43,16 +74,18 @@ watch(localNote, (newValue) => {
       Тема:
     </p>
     <input
-        v-model="localNote.title_name"
-        type="text"
-        class="mt-1 block w-full border rounded-md p-2"
-        placeholder="Заголовок заметки"
-      />
+      :value="noteTitleName"
+      @input="handleInputTitleName"
+      type="text"
+      class="mt-1 block w-full border rounded-md p-2"
+      placeholder="Заголовок заметки"
+    />
     <p>
       Контент:
     </p>
     <textarea
-      v-model="localNote.note_content"
+      :value="noteContent"
+      @input="handleInputContentNote"
       placeholder="Содержимое заметки..."
       rows="10"
       class="mt-1 block w-full border rounded-md p-2 font-mono"

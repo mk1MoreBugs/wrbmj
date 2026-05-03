@@ -8,7 +8,12 @@ export interface NoteShortInfo {
 
 export interface NoteContent {
   id: number,
-  last_update: '',
+  last_update: string,
+  title_name: string,
+  note_content: string,
+}
+
+export interface NoteEditedProps {
   title_name: string,
   note_content: string,
 }

@@ -9,7 +9,6 @@ import type { NoteResponse } from "@/models/ApiResponse"
 
 export const useNotesListStore = defineStore("notesList", () => {
   const notes = ref<NoteShortInfo[]>()
-  const noteContent = ref<NoteContent>()
 
   async function fetchNotes(): Promise<void> {
     try {
