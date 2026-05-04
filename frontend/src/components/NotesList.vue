@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { onMounted, ref, watch } from 'vue'
-import { storeToRefs } from 'pinia'
 
 import { useNotesListStore } from "@/stores/notesList"
 import NoteCard from "@/components/NoteCard.vue"
 
-import type { NoteEditedProps } from "@/models/Notes"
+import type { NoteContent } from "@/models/Notes"
 
-const props = defineProps<{currentEditedNote: NoteEditedProps | undefined}>()
+const props = defineProps<{currentEditedNote: NoteContent | undefined}>()
 
 const store = useNotesListStore()
 const router = useRouter()
 
-const { notes } = storeToRefs(store)
 
 const isCreating = ref(false)
 
@@ -51,7 +49,7 @@ const handleAddNoteClick = async () => {
 // TODO: fix me
 watch(() => props.currentEditedNote, (newNote) => {
   if (newNote?.title_name !== undefined && newNote?.note_content !== undefined) {
-    store.fetchNotes()
+    store.updateNoteInList(newNote)
   }
 }, { immediate: true })
 
@@ -59,8 +57,14 @@ watch(() => props.currentEditedNote, (newNote) => {
 
 <template>
   <div class="flex flex-col gap-3">
-    <div v-for="note in notes" :key="note.id">
-      <NoteCard v-bind="note" @click="handleCardClick" />
+    <div v-for="note in store.notes" :key="note.id">
+      <NoteCard
+        :id="note.id"
+        :last-update="note.lastUpdate"
+        :title-name="note.titleName"
+        :short-description="note.shortDescription"
+        @click="handleCardClick"
+      />
     </div>
 
     <div>

@@ -3,13 +3,13 @@ import {onBeforeUnmount, watch, computed } from 'vue'
 
 import { useNoteContentStore } from "@/stores/noteContent"
 
-import type { NoteEditedProps } from "@/models/Notes"
+import type { NoteContent } from "@/models/Notes"
 
 
 const props = defineProps<{id: string}>()
 
 const emit = defineEmits<{
-  (e: "update-note", updatedNote: NoteEditedProps): void
+  (e: "update-note", updatedNote: NoteContent): void
 }>()
 
 const store = useNoteContentStore()
@@ -21,37 +21,29 @@ const noteContent = computed(() => store.noteItem?.note_content ?? '')
 const handleInputTitleName = (event: Event) => {
   const target = event.target as HTMLInputElement
 
-  store.updateNote(
-    {
-      id: store.noteItem?.id as number,
-      last_update: store.noteItem?.last_update as string,
-      title_name: target.value,
-      note_content: store.noteItem?.note_content as string,
-    }
-  )
-
-  emit('update-note', {
+  const updatedNote: NoteContent = {
+    id: store.noteItem?.id as number,
+    last_update: store.noteItem?.last_update as string,
     title_name: target.value,
     note_content: store.noteItem?.note_content as string,
-  })
+  }
+
+  store.updateNote(updatedNote)
+  emit('update-note', updatedNote)
 }
 
 const handleInputContentNote = (event: Event) => {
   const target = event.target as HTMLInputElement
 
-  store.updateNote(
-    {
-      id: store.noteItem?.id as number,
-      last_update: store.noteItem?.last_update as string,
-      title_name: store.noteItem?.title_name as string,
-      note_content: target.value,
-    }
-  )
-
-  emit('update-note', {
+  const updatedNote: NoteContent = {
+    id: store.noteItem?.id as number,
+    last_update: store.noteItem?.last_update as string,
     title_name: store.noteItem?.title_name as string,
     note_content: target.value,
-  })
+  }
+
+  store.updateNote(updatedNote)
+  emit('update-note', updatedNote)
 }
 
 onBeforeUnmount(() => {

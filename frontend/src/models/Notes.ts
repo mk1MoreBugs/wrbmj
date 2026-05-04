@@ -12,8 +12,3 @@ export interface NoteContent {
   title_name: string,
   note_content: string,
 }
-
-export interface NoteEditedProps {
-  title_name: string,
-  note_content: string,
-}

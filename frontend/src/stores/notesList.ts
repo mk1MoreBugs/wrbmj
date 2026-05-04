@@ -30,6 +30,26 @@ export const useNotesListStore = defineStore("notesList", () => {
     }
   }
 
+  function updateNoteInList(note: NoteContent) {
+    let index = notes.value?.findIndex(it => it.id === note.id)
+    if (index === undefined) {
+      index = -1
+    }
+
+    const noteShortInfo = {
+      id: note.id,
+      lastUpdate: new Date(note.last_update),
+      titleName: note.title_name,
+      shortDescription: note.note_content.substring(0, 80)
+    }
+
+    if (index !== -1 && notes.value !== undefined) {
+      notes.value[index] = noteShortInfo
+    } else {
+      notes.value?.unshift(noteShortInfo)
+    }
+  }
+
   async function createNote(): Promise<NoteShortInfo> {
     try {
       const response: NoteResponse = await notesApi.createNote()
@@ -55,6 +75,7 @@ export const useNotesListStore = defineStore("notesList", () => {
   return {
     notes,
     fetchNotes,
+    updateNoteInList,
     createNote,
   }
 })
