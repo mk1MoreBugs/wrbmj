@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from fastapi import (
     HTTPException,
@@ -67,7 +68,7 @@ async def update_note_from_ws(
         connection_manager: WsConnectionManager,
         note_id: int,
 ) -> NoteOutInDetailed:
-    note_from_websocket = await websocket.receive_json()
+    note_from_websocket = await websocket.receive_text()
     note_model = NoteOutInDetailed.model_validate_json(note_from_websocket, strict=True)
     current_timestamp = get_current_timestamp()
     note_model.last_update = current_timestamp
@@ -75,6 +76,10 @@ async def update_note_from_ws(
     await redis_utils.set_note_in_redis(redis=redis, note_id=note_id, note_in_detailed=note_model)
 
     await connection_manager.broadcast(message=note_model.model_dump_json())
+
+    logger = logging.getLogger(__name__)
+    logger.info("Note saved")
+
     return note_model
 
 

@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import (
     APIRouter,
     Path,
+    Query,
     WebSocketDisconnect,
 )
 from fastapi.websockets import WebSocket
@@ -43,7 +44,7 @@ async def create_note(
 @router.websocket("/{note_id}/edit")
 async def edit_note(
         note_id: Annotated[int, Path()],
-        token: TokenDep,
+        token: Annotated[str, Query()],
         websocket: WebSocket,
         connection_manager: WsConnectionManagerDep,
         session: SessionDep,

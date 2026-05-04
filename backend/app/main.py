@@ -1,10 +1,18 @@
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
+import logging
 
 from app.api.main import api_router
 from app.core.config import settings
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger(__name__)
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
@@ -28,3 +36,5 @@ if settings.all_cors_origins:
     )
 
 app.include_router(api_router)
+
+logger.info("Сервер запущен")
