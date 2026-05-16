@@ -9,7 +9,14 @@ export const useNoteContentStore = defineStore("noteContent", () => {
   const noteItem = ref<NoteContent>()
 
   function updateNote(note: NoteContent) {
-    noteItem.value = note
+    // Если уже загружена заметка, то обновляем в случае, когда id совпадают
+    if (noteItem.value != undefined && note.id === noteItem.value?.id) {
+      noteItem.value = note
+    }
+    // При инициализации заметки
+    if (noteItem.value == undefined) {
+      noteItem.value = note
+    }
   }
 
   function updateNoteInServer(note: NoteContent) {

@@ -8,12 +8,12 @@ from fastapi import (
 )
 from fastapi.websockets import WebSocket
 
-from app.api.deps import TokenDep, WsConnectionManagerDep, SessionDep, RedisDep
+from app.api.deps import TokenDep, SessionDep, RedisDep
 from app.api.utils import note_utils
 from app.api.utils.token_utils import check_token_data, get_token_data_or_raise_exception
 from app.models.notes import NoteOutShort, NoteOutInDetailed
 from app.crud import notes as notes_crud
-
+from app.api.utils.connection_manager import ws_connection_manager as connection_manager
 
 router = APIRouter(
     prefix="/notes",
@@ -46,7 +46,6 @@ async def edit_note(
         note_id: Annotated[int, Path()],
         token: Annotated[str, Query()],
         websocket: WebSocket,
-        connection_manager: WsConnectionManagerDep,
         session: SessionDep,
         redis: RedisDep,
 ):
