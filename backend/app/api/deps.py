@@ -8,7 +8,7 @@ from redis.asyncio.client import Redis
 from app.api.utils.CustomOAuth2PasswordBearer import CustomOAuth2PasswordBearer
 from app.core.config import settings
 from app.core.db import get_engine
-from app.api.utils.connection_manager import WsConnectionManager
+from app.api.utils.connection_manager import WsConnectionManager, ws_connection_manager
 
 reusable_oauth2 = CustomOAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
@@ -33,4 +33,3 @@ SessionDep = Annotated[Session, Depends(get_db)]
 RedisDep = Annotated[Redis, Depends(get_redis)]
 
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
-WsConnectionManagerDep = Annotated[WsConnectionManager, Depends(WsConnectionManager)]
